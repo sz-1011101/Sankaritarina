@@ -1,0 +1,169 @@
+//This class handles the Graphics, Renderer etc.
+#include "Texture.h"
+#include "Graphics.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <stdio.h>
+#include <string>
+#include "Enumeration.h"
+#include "RenderList.h"
+
+//Constructor of the Graphics class
+Graphics::Graphics()
+{
+	initGraphics();
+	//Initialize Texture objects
+	for (int i = 0; i < Enumeration::TEXTURES_COUNT; i++)
+	{
+		gTextures[i] = new Texture();
+	}
+}
+
+//Closing
+void Graphics::closeGraphics()
+{
+	//Remove all the textures from the textures array
+	for (int i = 0; i < Enumeration::TEXTURES_COUNT; i++)
+	{
+		SDL_DestroyTexture(gTextures[i]->getTexture());
+		delete gTextures[i]; //Delete Texture object
+		gTextures[i] = NULL; //Null the pointer
+	}
+
+	//Destroy and null renderer and Window
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(gWindow);
+	gWindow = NULL;
+	gRenderer = NULL;
+	//Quit SDL and IMG
+	IMG_Quit();
+	SDL_Quit();
+}
+
+//Init the Graphics and SDL2
+bool Graphics::initGraphics()
+{
+
+	printf("Initializing Graphics...\n");
+
+	toRender = new RenderList; //Initialize Render List
+
+	//Print Error if not successful
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		printf("Error while init. Graphics: %s\n", SDL_GetError());
+		return false;
+	}
+
+	//continue creating Window
+	gWindow = SDL_CreateWindow("Sankaritarina 0.001", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+	if (gWindow == NULL) //Something went wrong
+	{
+		printf("Error while creating Window: %s\n", SDL_GetError());
+		return false;
+	}
+
+	//continue creating Renderer
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+
+	if (gRenderer == NULL)
+	{
+		printf("Error while creating Renderer: %s\n", SDL_GetError());
+		return false;
+	}
+
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+	//continue initializing IMG
+	int flags = IMG_INIT_PNG;
+	if (!(IMG_Init(flags) & flags)) {
+		printf("Error while init. SDL_image: %s\n", IMG_GetError());
+		return false;
+	}
+
+	return true;
+}
+
+
+bool Graphics::initTexture(std::string path, Enumeration::TEXTURES_NAME textureName)
+{
+	if (!(gTextures[textureName]->loadTexture(path, gRenderer)))
+	{
+		printf("Error while init. Texture: %s\n", path.c_str());
+		return false;
+	}
+	return true;
+}
+
+//Deconstructor
+Graphics::~Graphics()
+{
+	closeGraphics();
+}
+
+//Getter for gWindow
+SDL_Window* Graphics::getGWindow()
+{
+	return gWindow;
+}
+
+//Getter for gRenderer
+SDL_Renderer* Graphics::getGRenderer()
+{
+	return gRenderer;
+}
+
+//Renders everything
+void Graphics::graphicsRender()
+{
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00); //black color
+	SDL_RenderClear(gRenderer);
+
+	RenderListNode* node = toRender->getFirst();
+	while (node != NULL) { //Iterate through the list
+		node->getRenderable()->render(); //Render renderables
+		node = node->getNext(); //next node
+		toRender->removeFirst(); //remove the head of the list
+	}
+
+	//Update screen
+	SDL_RenderPresent(gRenderer);
+}
+
+//Renders a texture
+bool Graphics::drawTexture(Enumeration::TEXTURES_NAME texture, int x, int y, int w, int h)
+{
+	int mWidth = gTextures[texture]->getTextureWidth();
+	int mHeight = gTextures[texture]->getTextureHeight();
+	//Cube with the position, width and height
+
+	SDL_Rect rSquare = { x, y, mWidth, mHeight };
+
+	SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
+
+	return true;
+}
+
+//Renders a texture which is clipped in Frames
+bool Graphics::drawFrameTexture(Enumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, const int* FRAME_WIDTH, const int* FRAME_HEIGHT)
+{
+	SDL_Rect rSquare = { x, y, *FRAME_WIDTH, *FRAME_HEIGHT }; //Cube with the position, width and height
+	SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
+
+	SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), &rClip, &rSquare);
+
+	return true;
+}
+
+
+//Adds the Renderable object to the RenderList, to draw with graphicsRender()
+bool Graphics::drawRenderable(Renderable* renderable)
+{
+	if (renderable != NULL) {
+		toRender->addRenderable(renderable);
+		return true;
+	}
+
+	return false;
+}
+
