@@ -9,3 +9,11 @@
 v0.001:
 -Implemented basic graphics module
 -Improved Documentation
+
+-Some code cleanup
+-Added basic Camera Class
+
+-Some cleanup
+-Added basic Map generation and rendering
+
+TODO: Timer functionallity, fps locking/counting, controls handling

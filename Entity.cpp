@@ -1,31 +1,31 @@
 //This class handles common Entities
 #include "Entity.h"
-#include "Enumeration.h"
+#include "TexturesEnumeration.h"
 #include "Graphics.h"
 #include <stdio.h>
 
 /* Entity Cnstructor
-	int xPos Postion x
-	int yPos Position y
-	nGraphics Graphics pointer
-	nTexture texture name
+	int x Postion x
+	int yPosition y
+	graphics Graphics pointer
+	texture Texture's name
 	FRAME_COUNT frame amount
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
 */
-Entity::Entity(int xPos, int yPos, Graphics* nGraphics, Enumeration::TEXTURES_NAME nTexture, int const * FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT)
+Entity::Entity(int x, int y, Graphics* graphics, TexturesEnumeration::TEXTURES_NAME texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT)
 {
-	x = xPos;
-	y = yPos;
-	graphics = nGraphics;
-	texture = nTexture;
+	this->x = x;
+	this->y = y;
+	this->graphics = graphics;
+	this->texture = texture;
 	currentFrame = 0;
 	this->FRAME_COUNT = FRAME_COUNT;
 	this->FRAME_WIDTH = FRAME_WIDTH;
 	this->FRAME_HEIGHT = FRAME_HEIGHT;
 }
 
-//Deconstructor
+//Destructor
 Entity::~Entity()
 {
 }
@@ -37,6 +37,6 @@ void Entity::render()
 	if (currentFrame >= frameCount) {
 		currentFrame = 0;
 	}
-	graphics->drawFrameTexture(texture, x, y, currentFrame, FRAME_WIDTH, FRAME_HEIGHT);
+	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT);
 	currentFrame++;
 }

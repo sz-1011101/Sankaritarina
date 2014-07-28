@@ -11,7 +11,7 @@ RenderList::RenderList()
 	last = NULL; //Init last
 }
 
-//Deconstr. for the RenderList
+//Denstr. for the RenderList
 RenderList::~RenderList()
 {
 }

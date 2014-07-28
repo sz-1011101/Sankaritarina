@@ -3,30 +3,38 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include <stdlib.h>     
+#include <time.h>
+
+#include "TexturesEnumeration.h"
+#include "Camera.h"
 #include "Graphics.h"
-#include "Enumeration.h"
 #include "Entity.h"
+#include "Map.h"
+
 
 
 int main(int argc, char* args[])
 {
+	//init seed for random numbers
+	srand(time(NULL));
+	//Locked camera in place for now
+	int const CAMERA_MAX_X = 0;
+	int const CAMERA_MAX_Y = 0;
 
-	Graphics graphics;
+	Camera* camera = new Camera(0, 0, &CAMERA_MAX_X, &CAMERA_MAX_Y);
+	Graphics* graphics = new Graphics(camera);
+	
+	int const MAP_WIDTH = 300;
+	int const MAP_HEIGHT = 45;
+
+	Map* myMap = new Map(graphics, &MAP_WIDTH, &MAP_HEIGHT);
+	myMap->generateMap(1, 1, 20);
+
+
 	bool quit = false;
-	graphics.initTexture("images/foo.png", Enumeration::TEXTURE_1);
+	graphics->initTexture("images/GroundTileBasic16x16.png", TexturesEnumeration::TEXTURE_EARTH);
 
-	int a = 4;
-	int b = 64;
-	int c = 205;
-
-	int const* FRAME_COUNT = &a;
-	int const* FRAME_WIDTH = &b;
-	int const* FRAME_HEIGHT = &c;
-
-
-	Entity* en1 = new Entity(50,100, &graphics, Enumeration::TEXTURE_1, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT);
-	Entity* en2 = new Entity(200, 170, &graphics, Enumeration::TEXTURE_1, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT);
-	Entity* en3 = new Entity(60, 300, &graphics, Enumeration::TEXTURE_1, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT);
 
 	SDL_Event e; //Event
 	while (!quit)
@@ -38,13 +46,13 @@ int main(int argc, char* args[])
 				quit = true;
 			}
 		}
-
-		graphics.drawRenderable(en1);
-		graphics.drawRenderable(en2);
-		graphics.drawRenderable(en3);
-
-		graphics.graphicsRender();
-		//SDL_Delay(1000/33);
+		graphics->drawRenderable(myMap);
+		graphics->graphicsRender();
+		SDL_Delay(1000/30); //improvised fps limit
 	}
+
+	graphics->~Graphics();
+	myMap->~Map();
+	delete camera;
 	return 0;
 }

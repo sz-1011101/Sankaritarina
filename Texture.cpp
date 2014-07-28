@@ -14,7 +14,7 @@ Texture::Texture()
 	textureHeight = 0;
 }
 
-//Deconstructor of the Texture Class
+//Destructor of the Texture Class
 Texture::~Texture()
 {
 	free();

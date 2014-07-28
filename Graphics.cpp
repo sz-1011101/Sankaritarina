@@ -1,33 +1,39 @@
 //This class handles the Graphics, Renderer etc.
-#include "Texture.h"
-#include "Graphics.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
-#include "Enumeration.h"
+
+#include "Texture.h"
+#include "Graphics.h"
+#include "TexturesEnumeration.h"
 #include "RenderList.h"
 
-//Constructor of the Graphics class
-Graphics::Graphics()
+
+
+//Constructor of the Graphics class, provided with a camera object
+Graphics::Graphics(Camera* camera)
 {
 	initGraphics();
 	//Initialize Texture objects
-	for (int i = 0; i < Enumeration::TEXTURES_COUNT; i++)
+	for (int i = 0; i < TexturesEnumeration::TEXTURES_COUNT; i++)
 	{
 		gTextures[i] = new Texture();
 	}
+
+	//Initizialize Camera, still set with test values
+	int const MAX_CAMERA_X = 1280 - SCREEN_WIDTH;
+	int const MAX_CAMERA_Y = 720 - SCREEN_HEIGHT;
+	this->gCamera = camera;
 }
 
 //Closing
 void Graphics::closeGraphics()
 {
 	//Remove all the textures from the textures array
-	for (int i = 0; i < Enumeration::TEXTURES_COUNT; i++)
+	for (int i = 0; i < TexturesEnumeration::TEXTURES_COUNT; i++)
 	{
 		SDL_DestroyTexture(gTextures[i]->getTexture());
-		delete gTextures[i]; //Delete Texture object
-		gTextures[i] = NULL; //Null the pointer
 	}
 
 	//Destroy and null renderer and Window
@@ -85,7 +91,7 @@ bool Graphics::initGraphics()
 }
 
 
-bool Graphics::initTexture(std::string path, Enumeration::TEXTURES_NAME textureName)
+bool Graphics::initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName)
 {
 	if (!(gTextures[textureName]->loadTexture(path, gRenderer)))
 	{
@@ -95,7 +101,7 @@ bool Graphics::initTexture(std::string path, Enumeration::TEXTURES_NAME textureN
 	return true;
 }
 
-//Deconstructor
+//Destructor
 Graphics::~Graphics()
 {
 	closeGraphics();
@@ -116,7 +122,7 @@ SDL_Renderer* Graphics::getGRenderer()
 //Renders everything
 void Graphics::graphicsRender()
 {
-	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00); //black color
+	SDL_SetRenderDrawColor(gRenderer, 200, 255, 255, 0x00); //black color
 	SDL_RenderClear(gRenderer);
 
 	RenderListNode* node = toRender->getFirst();
@@ -130,28 +136,32 @@ void Graphics::graphicsRender()
 	SDL_RenderPresent(gRenderer);
 }
 
-//Renders a texture
-bool Graphics::drawTexture(Enumeration::TEXTURES_NAME texture, int x, int y, int w, int h)
+//Renders a texture 
+//TODO make w,h useful
+bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h)
 {
-	int mWidth = gTextures[texture]->getTextureWidth();
-	int mHeight = gTextures[texture]->getTextureHeight();
-	//Cube with the position, width and height
+	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
+	{
+		int mWidth = gTextures[texture]->getTextureWidth();
+		int mHeight = gTextures[texture]->getTextureHeight();
+		//Cube with the position, width and height
 
-	SDL_Rect rSquare = { x, y, mWidth, mHeight };
-
-	SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
-
+		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
+	}
 	return true;
 }
 
 //Renders a texture which is clipped in Frames
-bool Graphics::drawFrameTexture(Enumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, const int* FRAME_WIDTH, const int* FRAME_HEIGHT)
+bool Graphics::drawFrameTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT)
 {
-	SDL_Rect rSquare = { x, y, *FRAME_WIDTH, *FRAME_HEIGHT }; //Cube with the position, width and height
-	SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
+	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
+	{
+		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), *FRAME_WIDTH, *FRAME_HEIGHT }; //Cube with the position, width and height
+		SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
 
-	SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), &rClip, &rSquare);
-
+		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), &rClip, &rSquare);
+	}
 	return true;
 }
 
@@ -167,3 +177,14 @@ bool Graphics::drawRenderable(Renderable* renderable)
 	return false;
 }
 
+//Retruns the Cameras X Position
+int Graphics::getCameraX()
+{
+	return gCamera->getCameraX();
+}
+
+//Retruns the Cameras Y Position
+int Graphics::getCameraY()
+{
+	return gCamera->getCameraY();
+}

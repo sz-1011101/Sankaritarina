@@ -1,20 +1,19 @@
 //Renderable class for everything that shall be renderable
 #include "Renderable.h"
-#include "Enumeration.h"
 
 //Constructor
-Renderable::Renderable(int xPos, int yPos, Graphics* nGraphics)
+Renderable::Renderable(int x, int y, Graphics* graphics)
 {
-	x = xPos;
-	y = yPos;
-	graphics = nGraphics;
+	this->x = x;
+	this->y = y;
+	this->graphics = graphics;
 }
 //Constructor
 Renderable::Renderable()
 {
 }
 
-//Deconstructor
+//Destructor
 Renderable::~Renderable()
 {
 }

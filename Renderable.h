@@ -1,5 +1,4 @@
 #pragma once
-#include "Enumeration.h"
 
 class Graphics; //forward declaration
  
@@ -10,13 +9,11 @@ protected:
 	Graphics* graphics;
 	int x;
 	int y;
-	int width=0;
-	int height=0;
 
 public:
 
 	Renderable();
-	Renderable(int xPos, int yPos, Graphics* nGraphics);
+	Renderable(int x, int y, Graphics* graphics);
 	~Renderable();
 	virtual void render();
 };
