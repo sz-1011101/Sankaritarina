@@ -1,1 +1,0 @@
-//This class handels enumerations
