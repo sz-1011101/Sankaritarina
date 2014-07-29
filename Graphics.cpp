@@ -1,6 +1,7 @@
 //This class handles the Graphics, Renderer etc.
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 
@@ -39,8 +40,10 @@ void Graphics::closeGraphics()
 	//Destroy and null renderer and Window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
+	TTF_CloseFont(gFont);
 	gWindow = NULL;
 	gRenderer = NULL;
+	gFont = NULL;
 	//Quit SDL and IMG
 	IMG_Quit();
 	SDL_Quit();
@@ -86,11 +89,33 @@ bool Graphics::initGraphics()
 		printf("Error while init. SDL_image: %s\n", IMG_GetError());
 		return false;
 	}
+	//continue with init. TFF
+	if (TTF_Init() < 0)
+	{
+		printf("Error initializing TTF! Error: %s\n", TTF_GetError());
+		return false;
+	}
 
 	return true;
 }
 
+//Initialize a font
+bool Graphics::initFont(std::string path, int size)
+{
+	if (gFont != NULL)
+	{
+		TTF_CloseFont(gFont);
+	}
+	gFont = TTF_OpenFont(path.c_str(), size);
+	if (gFont == NULL)
+	{
+		printf("Error initualizing font! Error: %s\n", TTF_GetError());
+		return false;
+	}
+	return true;
+}
 
+//Initialize a Texture into the array gTexture
 bool Graphics::initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName)
 {
 	if (!(gTextures[textureName]->loadTexture(path, gRenderer)))
@@ -119,6 +144,11 @@ SDL_Renderer* Graphics::getGRenderer()
 	return gRenderer;
 }
 
+TTF_Font*  Graphics::getFont()
+{
+	return gFont;
+}
+
 //Renders everything
 void Graphics::graphicsRender()
 {
@@ -136,7 +166,7 @@ void Graphics::graphicsRender()
 	SDL_RenderPresent(gRenderer);
 }
 
-//Renders a texture 
+//Renders a texture from the gTexture array
 //TODO make w,h useful
 bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h)
 {
@@ -152,7 +182,20 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 	return true;
 }
 
-//Renders a texture which is clipped in Frames
+//Renders a SDL_texture 
+//TODO make w,h useful
+bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h)
+{
+	if (texture != NULL)
+	{
+		//Cube with the position, width and height
+		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), w, h };
+		SDL_RenderCopy(gRenderer, texture, NULL, &rSquare);
+	}
+	return true;
+}
+
+//Renders a texture from the gTexture array which is clipped in Frames
 bool Graphics::drawFrameTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT)
 {
 	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
@@ -164,6 +207,7 @@ bool Graphics::drawFrameTexture(TexturesEnumeration::TEXTURES_NAME texture, int 
 	}
 	return true;
 }
+
 
 
 //Adds the Renderable object to the RenderList, to draw with graphicsRender()

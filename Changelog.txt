@@ -15,5 +15,6 @@ v0.001:
 
 -Some cleanup
 -Added basic Map generation and rendering
+-Added basic Timer, fps locking counting and locking, text rendering
 
-TODO: Timer functionallity, fps locking/counting, controls handling
+TODO: controls handling

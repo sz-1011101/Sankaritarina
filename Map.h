@@ -5,6 +5,13 @@
 class Map :
 	public Renderable
 {
+public:
+	Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT);
+	~Map();
+
+	int getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr);
+	void generateMap(int sheerUp, int sheerDown, int initHeight);
+	virtual void render();
 private:
 	int const* MAP_WIDTH;
 	int const* MAP_HEIGHT;
@@ -12,13 +19,5 @@ private:
 
 	Uint8*** map;
 	Graphics* graphics;
-
-public:
-	Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT);
-	~Map();
-
-	int getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr);
-	void generateMap(int sheerUp, int sheerDown, int initHeight);
-	void render();
 };
 

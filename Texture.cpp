@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 
@@ -37,8 +38,8 @@ void Texture::free()
 /* Loads the Texture
 	path: path to texture
 	renderer: corresponding renderer
-*/
-bool Texture::loadTexture(std::string path,SDL_Renderer* renderer)
+	*/
+bool Texture::loadTexture(std::string path, SDL_Renderer* renderer)
 {
 	free();
 	//Load Texture from path
@@ -56,6 +57,7 @@ bool Texture::loadTexture(std::string path,SDL_Renderer* renderer)
 		if (texture == NULL)
 		{
 			printf("Error creating Texture from %s, Error: %s\n", path.c_str(), SDL_GetError());
+			return false;
 		}
 
 		//Set width,height
@@ -66,6 +68,9 @@ bool Texture::loadTexture(std::string path,SDL_Renderer* renderer)
 	}
 	return true;
 }
+
+
+
 
 //get Texture
 SDL_Texture* Texture::getTexture()
