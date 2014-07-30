@@ -1,6 +1,5 @@
 //This class handles common Entities
 #include "Entity.h"
-#include "TexturesEnumeration.h"
 #include "Graphics.h"
 #include <stdio.h>
 
@@ -12,8 +11,8 @@
 	FRAME_COUNT frame amount
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
-*/
-Entity::Entity(int x, int y, Graphics* graphics, TexturesEnumeration::TEXTURES_NAME texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT)
+	*/
+Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT)
 {
 	this->x = x;
 	this->y = y;
@@ -37,6 +36,6 @@ void Entity::render()
 	if (currentFrame >= frameCount) {
 		currentFrame = 0;
 	}
-	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT);
+	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
 	currentFrame++;
 }

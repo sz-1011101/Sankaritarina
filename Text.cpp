@@ -80,5 +80,5 @@ void Text::updateText(std::string newText)
 void Text::render()
 {
 	//Draw the Texture directly
-	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight);
+	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, false);
 }

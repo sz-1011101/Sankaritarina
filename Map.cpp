@@ -98,7 +98,17 @@ void Map::render()
 
 	//Only render a part of the map matrix, since the rest will be invisible anyway
 	int firstIndexX = graphics->getCameraX() / MAP_TILE_WIDTH_HEIGHT;
-	int lastIndexX = firstIndexX + (graphics->SCREEN_WIDTH / MAP_TILE_WIDTH_HEIGHT);
+	int lastIndexX = firstIndexX + (*graphics->SCREEN_WIDTH / MAP_TILE_WIDTH_HEIGHT)+1;
+
+	//Check if firstIndex, lastIndex aren't violating array length
+	if (firstIndexX < 0)
+	{
+		firstIndexX = 0;
+	}
+	if (lastIndexX >= *MAP_WIDTH)
+	{
+		lastIndexX = *MAP_WIDTH - 1;
+	}
 
 	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
 
@@ -116,7 +126,7 @@ void Map::render()
 				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
 				break;
 			}
-			graphics->drawTexture(textureToDraw, i * 16, j * 16, 16, 16);
+			graphics->drawTexture(textureToDraw, i * 16, j * 16, 16, 16, true);
 			
 		}
 	}

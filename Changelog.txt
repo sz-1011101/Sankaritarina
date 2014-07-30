@@ -15,6 +15,13 @@ v0.001:
 
 -Some cleanup
 -Added basic Map generation and rendering
+-Some cleanup
 -Added basic Timer, fps locking counting and locking, text rendering
 
-TODO: controls handling
+-Some minor changes how Textures are handled
+-Some cleanup
+-Added basic controls class
+-Added unsmoothed camera movement (mostly framerate independent)
+-Minor bugfixes
+
+TODO: controls handling, some cleanup

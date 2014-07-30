@@ -5,5 +5,6 @@ public:
 	Functions();
 	~Functions();
 	static int generateRandomNumber(int start, int end);
+	static double calculateFrameFactor(int framerate);
 };
 

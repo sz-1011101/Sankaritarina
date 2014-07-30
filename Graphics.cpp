@@ -13,18 +13,16 @@
 
 
 //Constructor of the Graphics class, provided with a camera object
-Graphics::Graphics(Camera* camera)
+Graphics::Graphics(Camera* camera, const int* SCREEN_WIDTH, const int* SCREEN_HEIGHT)
 {
+	this->SCREEN_WIDTH = SCREEN_WIDTH;
+	this->SCREEN_HEIGHT = SCREEN_HEIGHT;
 	initGraphics();
 	//Initialize Texture objects
 	for (int i = 0; i < TexturesEnumeration::TEXTURES_COUNT; i++)
 	{
 		gTextures[i] = new Texture();
 	}
-
-	//Initizialize Camera, still set with test values
-	int const MAX_CAMERA_X = 1280 - SCREEN_WIDTH;
-	int const MAX_CAMERA_Y = 720 - SCREEN_HEIGHT;
 	this->gCamera = camera;
 }
 
@@ -64,7 +62,7 @@ bool Graphics::initGraphics()
 	}
 
 	//continue creating Window
-	gWindow = SDL_CreateWindow("Sankaritarina 0.001", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Sankaritarina 0.001", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, *SCREEN_WIDTH, *SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
 	if (gWindow == NULL) //Something went wrong
 	{
@@ -115,15 +113,15 @@ bool Graphics::initFont(std::string path, int size)
 	return true;
 }
 
-//Initialize a Texture into the array gTexture
-bool Graphics::initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName)
+//Initialize a Texture into the array gTexture and returns a pointer to said Texture
+Texture* Graphics::initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName)
 {
 	if (!(gTextures[textureName]->loadTexture(path, gRenderer)))
 	{
 		printf("Error while init. Texture: %s\n", path.c_str());
 		return false;
 	}
-	return true;
+	return gTextures[textureName];
 }
 
 //Destructor
@@ -166,46 +164,113 @@ void Graphics::graphicsRender()
 	SDL_RenderPresent(gRenderer);
 }
 
-//Renders a texture from the gTexture array
+//Renders the provided Texture
 //TODO make w,h useful
-bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h)
+bool Graphics::drawTexture(Texture* texture, int x, int y, int w, int h, bool useCamera)
+{
+	if (texture != NULL)
+	{
+		int mWidth = texture->getTextureWidth();
+		int mHeight = texture->getTextureHeight();
+
+		//Cube with the position, width and height
+		SDL_Rect rSquare;
+
+		//Add camera offset if wanted
+		if (useCamera)
+		{
+			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+		}
+		else
+		{
+			rSquare = { x, y, mWidth, mHeight };
+		}
+
+		SDL_RenderCopy(gRenderer, texture->getTexture(), NULL, &rSquare);
+	}
+	return true;
+}
+
+//Renders a texture from the gTexture array, if the texture isn't empty, return true
+//TODO make w,h useful
+bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, bool useCamera)
 {
 	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
 	{
 		int mWidth = gTextures[texture]->getTextureWidth();
 		int mHeight = gTextures[texture]->getTextureHeight();
-		//Cube with the position, width and height
 
-		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+		//Cube with the position, width and height
+		SDL_Rect rSquare;
+
+		//Add camera offset if wanted
+		if (useCamera)
+		{
+			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+		}
+		else
+		{
+			rSquare = { x, y, mWidth, mHeight };
+		}
+
 		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
+		return true;
 	}
-	return true;
+	return false;
 }
 
-//Renders a SDL_texture 
+//Renders a SDL_texture, if the texture isn't NULL, return true
 //TODO make w,h useful
-bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h)
+bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera)
 {
 	if (texture != NULL)
 	{
 		//Cube with the position, width and height
-		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), w, h };
+		SDL_Rect rSquare;
+
+		//Add camera offset if wanted
+		if (useCamera)
+		{
+			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), w, h };
+		}
+		else
+		{
+			rSquare = { x, y, w, h };
+		}
+
 		SDL_RenderCopy(gRenderer, texture, NULL, &rSquare);
+
+		return true;
 	}
-	return true;
+	return false;
 }
 
 //Renders a texture from the gTexture array which is clipped in Frames
-bool Graphics::drawFrameTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT)
+bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera)
 {
-	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
+	if (texture != NULL)
 	{
-		SDL_Rect rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), *FRAME_WIDTH, *FRAME_HEIGHT }; //Cube with the position, width and height
+		//Cube with the position, width and height
+		SDL_Rect rSquare;
+
+		//Add camera offset if wanted
+		if (useCamera)
+		{
+			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), *FRAME_WIDTH, *FRAME_HEIGHT };
+		}
+		else
+		{
+			rSquare = { x, y, *FRAME_WIDTH, *FRAME_HEIGHT };
+		}
+
 		SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
 
-		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), &rClip, &rSquare);
+		SDL_RenderCopy(gRenderer, texture->getTexture(), &rClip, &rSquare);
+
+		return true;
 	}
-	return true;
+
+	return false;
 }
 
 

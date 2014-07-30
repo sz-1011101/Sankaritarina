@@ -8,21 +8,22 @@ class Graphics
 {
 public:
 
-	const int SCREEN_WIDTH = 1280;
-	const int SCREEN_HEIGHT = 720;
+	const int* SCREEN_WIDTH;
+	const int* SCREEN_HEIGHT;
 
-	Graphics(Camera* camera);
+	Graphics(Camera* camera, const int* SCREEN_WIDTH, const int* SCREEN_HEIGHT);
 	~Graphics();
 	SDL_Window* getGWindow();
 	SDL_Renderer* getGRenderer();
 	TTF_Font* getFont();
-	bool initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName);
+	Texture* initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName);
 	bool initFont(std::string path, int size);
 	void graphicsRender();
 	bool drawRenderable(Renderable* renderable);
-	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h);
-	bool drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h);
-	bool drawFrameTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT);
+	bool drawTexture(Texture* texture, int x, int y, int w, int h, bool useCamera);
+	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, bool useCamera);
+	bool drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera);
+	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera);
 	int getCameraX();
 	int getCameraY();
 
