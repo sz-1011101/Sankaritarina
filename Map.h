@@ -15,7 +15,7 @@ public:
 private:
 	int const* MAP_WIDTH;
 	int const* MAP_HEIGHT;
-	int const MAP_TILE_WIDTH_HEIGHT = 16;
+	int const MAP_TILE_WIDTH_HEIGHT = 8;
 
 	Uint8*** map;
 	Graphics* graphics;

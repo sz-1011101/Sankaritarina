@@ -1,9 +1,8 @@
-//This class handels enumerations for the Map
+//This namespace handels enumerations for the Map
 #pragma once
 
-class MapEnumeration
+namespace MapEnumeration
 {
-public:
 	typedef enum MAP_TILE_TYPE
 	{
 		MAP_TILE_TYPE_EMTPY = 0,

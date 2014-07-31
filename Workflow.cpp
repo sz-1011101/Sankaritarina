@@ -16,21 +16,24 @@
 #include "Text.h"
 #include "Timer.h"
 #include "Controls.h"
+#include "World.h"
+#include "EntityControl.h"
+#include "Tree.h"
 
 //some testing is done here
 int main(int argc, char* args[])
 {
 	ControlsEnumeration::CTRL_STATUS status = ControlsEnumeration::CTRL_STATUS_INIT;
 	//init seed for random numbers
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	int const SCREEN_WIDTH = 1280;
 	int const SCREEN_HEIGHT = 720;
 
 	int const FPS_LOCK = 30;
-	int const MAP_WIDTH = 300;
-	int const MAP_HEIGHT = 100;
-	int const CAMERA_MAX_X = (MAP_WIDTH-1)*16-1280;
-	int const CAMERA_MAX_Y = (MAP_HEIGHT-1)*16-720;
+	int const MAP_WIDTH = 1000;
+	int const MAP_HEIGHT = 200;
+	int const CAMERA_MAX_X = (MAP_WIDTH-1)*8-1280;
+	int const CAMERA_MAX_Y = (MAP_HEIGHT-1)*8-720;
 	
 	int framerate = 0;
 	int frameStartTime = 0;
@@ -41,19 +44,27 @@ int main(int argc, char* args[])
 	Controls* controls = new Controls(camera);
 	Graphics* graphics = new Graphics(camera, &SCREEN_WIDTH, &SCREEN_HEIGHT);
 
-	graphics->initTexture("images/GroundTileBasic16x16.png", TexturesEnumeration::TEXTURE_EARTH);
+	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
+	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
 	graphics->initFont("fonts/Munro.ttf", 20);
 
 	Timer* fpsTimer = new Timer();
 	Map* myMap = new Map(graphics, &MAP_WIDTH, &MAP_HEIGHT);
+	World* world = new World();
+	EntityControl* entityControl = new EntityControl(myMap, graphics, world);
 	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);
 	Text* fps = new Text("init fps...", 10, 700, 255, 255, 255, NULL, graphics);
 
 	myMap->generateMap(1, 1, 20); //Generate Test map
-
-
-
 	std::stringstream fps_string;
+
+	//Spawn some trees
+	for (int i = 0; i < 200; i++)
+	{
+		entityControl->spawnTree(100*i, 1000);
+	}
+	
+
 
 	status = ControlsEnumeration::CTRL_STATUS_MOVING_CAMERA;
 	while (status != ControlsEnumeration::CTRL_STATUS_QUIT)
@@ -63,6 +74,7 @@ int main(int argc, char* args[])
 		//Proccess Input, update status
 		status = controls->processInput(status, framerate);
 
+		entityControl->entityInteraction(framerate);
 		//Test drawing
 		graphics->drawRenderable(myMap);
 		graphics->drawRenderable(notice);
@@ -90,6 +102,7 @@ int main(int argc, char* args[])
 	delete controls;
 	delete graphics;
 	delete myMap;
+	delete entityControl;
 	delete fpsTimer;
 	delete notice;
 	delete fps;

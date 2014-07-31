@@ -26,6 +26,7 @@ public:
 	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera);
 	int getCameraX();
 	int getCameraY();
+	Texture* getTextures(TexturesEnumeration::TEXTURES_NAME texture);
 
 private:
 

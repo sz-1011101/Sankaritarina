@@ -21,7 +21,7 @@ Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Fon
 	//Create the texture
 	if (!initText(displayedText, color, font, graphics))
 	{
-		printf("Error creating text \"%s\"\n", displayedText);
+		printf("Error creating text \"%s\"\n", (std::string)displayedText);
 	}
 
 }
@@ -49,7 +49,7 @@ bool Text::initText(std::string displayedText, SDL_Color color, TTF_Font* font, 
 
 	if (loadedSurface == NULL)
 	{
-		printf("Error creating surface from text \"%s\" Error: %s\n", SDL_GetError());
+		printf("Error creating surface from text \"%s\" Error: %s\n", (std::string)displayedText, SDL_GetError());
 		return false;
 	}
 	else

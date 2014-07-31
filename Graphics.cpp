@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include <string>
 
-#include "Texture.h"
 #include "Graphics.h"
-#include "TexturesEnumeration.h"
 #include "RenderList.h"
 
 
@@ -266,7 +264,6 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 		SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
 
 		SDL_RenderCopy(gRenderer, texture->getTexture(), &rClip, &rSquare);
-
 		return true;
 	}
 
@@ -296,4 +293,10 @@ int Graphics::getCameraX()
 int Graphics::getCameraY()
 {
 	return gCamera->getCameraY();
+}
+
+//Returns Texture
+Texture* Graphics::getTextures(TexturesEnumeration::TEXTURES_NAME texture)
+{
+	return gTextures[texture];
 }

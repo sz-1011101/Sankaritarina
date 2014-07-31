@@ -24,4 +24,6 @@ v0.001:
 -Added unsmoothed camera movement (mostly framerate independent)
 -Minor bugfixes
 
-TODO: controls handling, some cleanup
+-Lots of entity handling, tree generation and drawing, enum def cleanup (hopefully)
+
+TODO: Tree positioning, controls handling, some cleanup

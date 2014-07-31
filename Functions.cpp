@@ -19,9 +19,17 @@ int Functions::generateRandomNumber(int start, int end)
 	return randNum;
 }
 
-//Calculates an generall factor that depends on the provided Framerate
+//Calculates an generell factor that depends on the provided Framerate
 double Functions::calculateFrameFactor(int framerate)
 {
-	//Be 30 the "optimal" framerate
-	return 30.0 / ((double)framerate);
+	//Check if dividing by zero
+	if (framerate != 0)
+	{
+		//Be 30 the "optimal" framerate
+		return 30.0 / ((double)framerate);
+	}
+	else
+	{
+		return 0.0;
+	}
 }

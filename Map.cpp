@@ -100,6 +100,9 @@ void Map::render()
 	int firstIndexX = graphics->getCameraX() / MAP_TILE_WIDTH_HEIGHT;
 	int lastIndexX = firstIndexX + (*graphics->SCREEN_WIDTH / MAP_TILE_WIDTH_HEIGHT)+1;
 
+	int firstIndexY = graphics->getCameraY() / MAP_TILE_WIDTH_HEIGHT;
+	int lastIndexY = firstIndexY + (*graphics->SCREEN_HEIGHT / MAP_TILE_WIDTH_HEIGHT) + 1;
+
 	//Check if firstIndex, lastIndex aren't violating array length
 	if (firstIndexX < 0)
 	{
@@ -110,12 +113,21 @@ void Map::render()
 		lastIndexX = *MAP_WIDTH - 1;
 	}
 
+	if (firstIndexY < 0)
+	{
+		firstIndexY = 0;
+	}
+	if (lastIndexY >= *MAP_HEIGHT)
+	{
+		lastIndexY = *MAP_HEIGHT - 1;
+	}
+
 	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
 
 	//render everything
 	for (int i = firstIndexX; i < lastIndexX; i++)
 	{
-		for (int j = 0; j < *MAP_HEIGHT; j++)
+		for (int j = firstIndexY; j < lastIndexY; j++)
 		{
 			switch (map[i][j][0])
 			{
@@ -126,7 +138,7 @@ void Map::render()
 				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
 				break;
 			}
-			graphics->drawTexture(textureToDraw, i * 16, j * 16, 16, 16, true);
+			graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
 			
 		}
 	}

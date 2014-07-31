@@ -1,9 +1,8 @@
-//This class handels enumerations for Control statuses
+//This namespace handels enumerations for Control statuses
 #pragma once
 
-class ControlsEnumeration
+namespace ControlsEnumeration
 {
-public:
 	typedef enum CTRL_STATUS
 	{
 		CTRL_STATUS_INIT=0,
