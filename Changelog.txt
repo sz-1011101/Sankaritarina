@@ -25,5 +25,6 @@ v0.001:
 -Minor bugfixes
 
 -Lots of entity handling, tree generation and drawing, enum def cleanup (hopefully)
+-Tree positioning, basic dynamic spawning, some fixes
 
-TODO: Tree positioning, controls handling, some cleanup
+TODO: Color modulation, time, controls handling, some cleanup

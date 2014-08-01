@@ -13,6 +13,7 @@ namespace MapEnumeration
 	typedef enum MAP_TILE_ATTRIBUTE
 	{
 		MAP_TILE_ATR_TYPE = 0,
+		MAP_TILE_ATR_GROUND_HEIGHT ,
 		MAP_TILE_ATR_TOTAL
 	};
 };

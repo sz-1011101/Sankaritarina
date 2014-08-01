@@ -2,22 +2,28 @@
 #include "MapEnumeration.h"
 #include "Graphics.h"
 
+class EntityControl;
+
 class Map :
 	public Renderable
 {
 public:
-	Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT);
-	~Map();
 
-	int getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr);
-	void generateMap(int sheerUp, int sheerDown, int initHeight);
-	virtual void render();
-private:
 	int const* MAP_WIDTH;
 	int const* MAP_HEIGHT;
 	int const MAP_TILE_WIDTH_HEIGHT = 8;
 
+	Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT);
+	~Map();
+
+	int getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr);
+	void generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, EntityControl* entityControl);
+	int getHeightSegment(int x);
+	virtual void render();
+private:
+
 	Uint8*** map;
+	Uint8* segHeight;
 	Graphics* graphics;
 };
 

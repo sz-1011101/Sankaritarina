@@ -12,6 +12,7 @@ public:
 	virtual void render();
 	virtual void calcFrame(int framerate);
 	virtual void proceed(int framerate);
+	virtual bool flaggedForRemoval();
 protected:
 	Texture* texture;
 	int currentFrame;

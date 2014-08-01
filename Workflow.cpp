@@ -44,6 +44,7 @@ int main(int argc, char* args[])
 	Controls* controls = new Controls(camera);
 	Graphics* graphics = new Graphics(camera, &SCREEN_WIDTH, &SCREEN_HEIGHT);
 
+	//Init some textures
 	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
 	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
 	graphics->initFont("fonts/Munro.ttf", 20);
@@ -55,15 +56,9 @@ int main(int argc, char* args[])
 	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);
 	Text* fps = new Text("init fps...", 10, 700, 255, 255, 255, NULL, graphics);
 
-	myMap->generateMap(1, 1, 20); //Generate Test map
+	myMap->generateMap(1, 1, 50,10,entityControl); //Generate Test map
 	std::stringstream fps_string;
 
-	//Spawn some trees
-	for (int i = 0; i < 200; i++)
-	{
-		entityControl->spawnTree(100*i, 1000);
-	}
-	
 
 
 	status = ControlsEnumeration::CTRL_STATUS_MOVING_CAMERA;

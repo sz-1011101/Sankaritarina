@@ -1,3 +1,4 @@
+//This class controls all entity actions
 
 #include <iterator>
 #include <stdio.h>
@@ -5,6 +6,7 @@
 
 #include "EntityControl.h"
 #include "TexturesEnumeration.h"
+#include "Functions.h"
 
 
 //Constructor
@@ -18,6 +20,7 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 //Deconstructor
 EntityControl::~EntityControl()
 {
+	std::vector<Entity*>::iterator entityIterator;
 	//Iterate over all entity elements and proceed
 	for (entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
 	{
@@ -30,45 +33,47 @@ EntityControl::~EntityControl()
 bool EntityControl::addNewEntity(Entity* entity)
 {
 	//Entity addable?
-	if ((int)entities.size() < MAX_ENTITIES)
+	if (entities.size() < MAX_ENTITIES)
 	{
 		entities.push_back(entity);
-		printf("Entity added, current size= %i\n", entities.size());
+		printf("Entity added, current total= %i\n", entities.size());
 		return true;
 	}
 	else
 	{
 		return false;
 	}
-	
-}
 
-//Remove entity with index i
-bool EntityControl::removeEntity(Entity* entity)
-{
-	
-	std::vector<Entity*>::iterator posToRemove = std::find(entities.begin(), entities.end(), entity);
-	//Check if found
-	if (posToRemove != entities.end())
-	{
-		delete *posToRemove;
-		entities.erase(posToRemove);
-		printf("Entity removed, current size= %i\n", entities.size());
-		return true;
-	}
-	
-	
 }
 
 //Handles the interaction between entities
+//TODO check this for memleaks and safty
 void EntityControl::entityInteraction(int framerate)
 {
-	//Iterate over all entity elements and proceed
-	for (entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
+	//-----------------------Entity Handling-------------------------------//
+
+	vegetationHandling(); //Spawn more trees
+
+	//-----------------Entity Removal and rendering------------------------//
+	std::vector<Entity*>::iterator entityIterator = entities.begin();
+	//Run over alle entities
+	while (entityIterator != entities.end())
 	{
-		(*entityIterator)->proceed(framerate);
-		graphics->drawRenderable(*entityIterator); //Clear for rendering
+		if ((*entityIterator)->flaggedForRemoval())
+		{
+			printf("Entity freed\n");
+			delete (*entityIterator); //Deallocate
+			entityIterator = entities.erase(entityIterator); //erase and put at new position
+			printf("Entities removed, current total= %i\n", entities.size());
+		}
+		else
+		{
+			(*entityIterator)->proceed(framerate);
+			graphics->drawRenderable(*entityIterator); //Clear for rendering
+			entityIterator++;
+		}
 	}
+
 }
 
 //Handles collisions of an entity with the map
@@ -78,9 +83,11 @@ void EntityControl::collisionsMap(Entity* entity)
 }
 
 //Spawns a tree, returns pointer if successful, NULL otherwise
-Tree* EntityControl::spawnTree(int x, int y)
+Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
-	Tree* spawnedTree = new Tree(x, y, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world);
+	int xPos = tileX*(map->MAP_TILE_WIDTH_HEIGHT) - 24;
+	int yPos = ((*map->MAP_HEIGHT - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 54;
+	Tree* spawnedTree = new Tree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world, seeded);
 	//return if successful
 	if (addNewEntity(spawnedTree))
 	{
@@ -91,5 +98,15 @@ Tree* EntityControl::spawnTree(int x, int y)
 		delete spawnedTree; //deallocate the now useless object
 		return NULL;
 	}
-	
+
+}
+
+//Handles vegetation growth and death on the map
+void EntityControl::vegetationHandling()
+{
+	if (entities.size() < MAX_TREES)
+	{
+		int randomTreePosX = Functions::generateRandomNumber(0, *map->MAP_WIDTH - 1);
+		spawnTree(randomTreePosX, map->getHeightSegment(randomTreePosX), true);
+	}
 }

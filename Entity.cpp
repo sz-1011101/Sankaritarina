@@ -49,3 +49,8 @@ void Entity::proceed(int framerate)
 {
 
 }
+
+bool Entity::flaggedForRemoval()
+{
+	return false;
+}

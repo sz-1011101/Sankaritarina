@@ -4,6 +4,8 @@
 #include "TexturesEnumeration.h"
 #include "Functions.h"
 #include "Graphics.h"
+#include "EntityControl.h"
+
 #include <stdio.h>
 
 //Basic Map object constructor
@@ -26,6 +28,8 @@ Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT)
 			map[i][j] = new Uint8[MapEnumeration::MAP_TILE_ATR_TOTAL];
 		}
 	}
+	//Initialize height array
+	segHeight = new Uint8[*MAP_WIDTH];
 }
 
 //Map destructor
@@ -59,25 +63,43 @@ int Map::getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr)
 	sheerUp how many tiles the height can differ from the previous height (upper limit)
 	sheerDown how many tiles the height can differ from the previous height (lower limit)
 	initHeight the height of the first segment
-*/
-void Map::generateMap(int sheerUp, int sheerDown, int initHeight)
+	*/
+void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, EntityControl* entityControl)
 {
 	printf("Generating map...\n");
-	
+	const int FLATTING = 4; //how long the earth will be flatted
 	int groundHeight = initHeight;
+	bool entityPut = false;
+	int flattedTiles = FLATTING;
 
 	for (int i = 0; i < *MAP_WIDTH; i++)
 	{
-		groundHeight = groundHeight+Functions::generateRandomNumber(-sheerDown, sheerUp);
-		//catch numbers which are too low (negative)
+		//Determine the grounds height or in case of placed entity, do nothing
+		if (!entityPut)
+		{
+			groundHeight = groundHeight + Functions::generateRandomNumber(-sheerDown, sheerUp);
+		}
+		else if (flattedTiles>0)
+		{
+			flattedTiles--;
+		}
+		else
+		{
+			flattedTiles = FLATTING;
+			entityPut = false;
+		}
+
+		//catch numbers which are too low (negative and 0)
 		if (groundHeight <= 1) {
 			groundHeight = 1;
 		}
+		//Set the segment's height
+		segHeight[i] = groundHeight;
 		//From the ground up create earth
-		for (int j = *MAP_HEIGHT-1; j >= 0; j--)
+		for (int j = *MAP_HEIGHT - 1; j >= 0; j--)
 		{
-			//Place earth until upper limit reached
-			if (j >(*MAP_HEIGHT-1) - groundHeight)
+			//Place earth until upper limit reached (note that the y axis is "inverse")
+			if (j > (*MAP_HEIGHT - 1) - groundHeight)
 			{
 				map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_EARTH;
 			}
@@ -86,7 +108,21 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight)
 				map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_EMTPY;
 			}
 		}
+		//Plant a tree with a random chance
+		if (!entityPut && Functions::generateRandomNumber(0, 100) < treeRate)
+		{
+			//spawn with a little offset to the left and up, also the earth should be flat around a tree
+			entityControl->spawnTree(i, groundHeight, false);
+			entityPut = true;
+		}
+
 	}
+}
+
+
+int Map::getHeightSegment(int x)
+{
+	return segHeight[x];
 }
 
 //Render the map via graphics
@@ -98,7 +134,7 @@ void Map::render()
 
 	//Only render a part of the map matrix, since the rest will be invisible anyway
 	int firstIndexX = graphics->getCameraX() / MAP_TILE_WIDTH_HEIGHT;
-	int lastIndexX = firstIndexX + (*graphics->SCREEN_WIDTH / MAP_TILE_WIDTH_HEIGHT)+1;
+	int lastIndexX = firstIndexX + (*graphics->SCREEN_WIDTH / MAP_TILE_WIDTH_HEIGHT) + 1;
 
 	int firstIndexY = graphics->getCameraY() / MAP_TILE_WIDTH_HEIGHT;
 	int lastIndexY = firstIndexY + (*graphics->SCREEN_HEIGHT / MAP_TILE_WIDTH_HEIGHT) + 1;
@@ -131,7 +167,7 @@ void Map::render()
 		{
 			switch (map[i][j][0])
 			{
-			case MapEnumeration::MAP_TILE_TYPE_EMTPY: 
+			case MapEnumeration::MAP_TILE_TYPE_EMTPY:
 				textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
 				break;
 			case MapEnumeration::MAP_TILE_TYPE_EARTH:
@@ -139,7 +175,7 @@ void Map::render()
 				break;
 			}
 			graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
-			
+
 		}
 	}
 }

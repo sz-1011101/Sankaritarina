@@ -8,14 +8,16 @@ class Tree :
 	public Entity
 {
 public:
-	Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world);	
+	Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world,bool seeded);	
 	~Tree();
 	virtual void render();
 	virtual void calcFrame(int framerate);
 	void growTree(int framerate, double rate);
 	virtual void proceed(int framerate);
+	virtual bool flaggedForRemoval();
 private:
-	TreeEnumeration::TREE_STATUS treeState;
+	TreeEnumeration::TREE_STATE treeState;
 	double growth = 0;
+	double maxGrothFullSize;
 };
 
