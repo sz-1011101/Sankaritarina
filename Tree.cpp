@@ -19,7 +19,7 @@ Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_
 	}
 
 	growth = Functions::generateRandomNumber(0, 50);
-	maxGrothFullSize = TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-50, 50);
+	maxGrothFullSize = TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
 }
 
 //Tree Destructor
@@ -42,7 +42,7 @@ void Tree::calcFrame(int framerate)
 
 	if (treeState == TREE_FULL_SIZE)
 	{
-		currentFrame = TREE_FULL_SIZE + 1 + world->getCurrentSeason();
+		currentFrame = TREE_FULL_SIZE + world->getCurrentSeason();
 		//Set frame according to status
 	}
 	else
@@ -64,6 +64,9 @@ void Tree::calcFrame(int framerate)
 		case TREE_FULL_SIZE:
 			currentFrame = 4;
 			break;
+		case TREE_DEAD:
+			currentFrame = 7;
+			break;
 		default:
 			currentFrame = 4;
 			break;
@@ -75,36 +78,38 @@ void Tree::calcFrame(int framerate)
 void Tree::growTree(int framerate, double rate)
 {
 	using namespace TreeEnumeration;
-	if (treeState < TREE_DEAD)
-	{
-		int growthCap[5] = { TREE_GROWTH_RATE_SEEDED_TO_SAPLING, TREE_GROWTH_RATE_SAPLING_TO_BIGGER_SAPPLING, TREE_GROWTH_RATE_BIGGER_SAPPLING_TO_SMALL, TREE_GROWTH_RATE_SMALL_TO_FULL_SIZE, (int)maxGrothFullSize };
 
-		//Tree increments state
-		if (growthCap[treeState] <= (int)growth)
+	int growthCap[6] = { TREE_GROWTH_RATE_SEEDED_TO_SAPLING, TREE_GROWTH_RATE_SAPLING_TO_BIGGER_SAPPLING, TREE_GROWTH_RATE_BIGGER_SAPPLING_TO_SMALL, TREE_GROWTH_RATE_SMALL_TO_FULL_SIZE, (int)maxGrothFullSize, TREE_GROWTH_RATE_DEATH_TO_DISAPPEAR };
+
+	//Tree increments state
+	if (growthCap[treeState] <= (int)growth)
+	{
+		switch (treeState)
 		{
-			switch (treeState)
-			{
-			case TREE_SEEDED:
-				treeState = TREE_SAPLING;
-				break;
-			case TREE_SAPLING:
-				treeState = TREE_BIGGER_SAPLING;
-				break;
-			case TREE_BIGGER_SAPLING:
-				treeState = TREE_SMALL;
-				break;
-			case TREE_SMALL:
-				treeState = TREE_FULL_SIZE;
-				break;
-			case TREE_FULL_SIZE:
-				treeState = TREE_DEAD;
-				break;
-			}
-			growth = 0;
+		case TREE_SEEDED:
+			treeState = TREE_SAPLING;
+			break;
+		case TREE_SAPLING:
+			treeState = TREE_BIGGER_SAPLING;
+			break;
+		case TREE_BIGGER_SAPLING:
+			treeState = TREE_SMALL;
+			break;
+		case TREE_SMALL:
+			treeState = TREE_FULL_SIZE;
+			break;
+		case TREE_FULL_SIZE:
+			treeState = TREE_DEAD;
+			break;
+		case TREE_DEAD:
+			treeState = TREE_DISAPPEARED;
+			break;
 		}
-		//Tree grows
-		growth = growth + (rate*Functions::calculateFrameFactor(framerate));
+		growth = 0;
 	}
+	//Tree grows
+	growth = growth + (rate*Functions::calculateFrameFactor(framerate));
+
 
 }
 
@@ -118,7 +123,7 @@ void Tree::proceed(int framerate)
 bool Tree::flaggedForRemoval()
 {
 
-	if (treeState == TreeEnumeration::TREE_DEAD)
+	if (treeState == TreeEnumeration::TREE_DISAPPEARED)
 	{
 		return true;
 	}

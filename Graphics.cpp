@@ -148,10 +148,8 @@ TTF_Font*  Graphics::getFont()
 //Renders everything
 void Graphics::graphicsRender()
 {
-	SDL_SetRenderDrawColor(gRenderer, 200, 255, 255, 0x00); //black color
-	SDL_RenderClear(gRenderer);
-
-	RenderListNode* node = toRender->getFirst();
+	
+		RenderListNode* node = toRender->getFirst();
 	while (node != NULL) { //Iterate through the list
 		node->getRenderable()->render(); //Render renderables
 		node = node->getNext(); //next node
@@ -299,4 +297,12 @@ int Graphics::getCameraY()
 Texture* Graphics::getTextures(TexturesEnumeration::TEXTURES_NAME texture)
 {
 	return gTextures[texture];
+}
+
+//Draw the background
+bool Graphics::drawBackground(Uint8 r, Uint8 g, Uint8 b)
+{
+	SDL_SetRenderDrawColor(gRenderer, r, g, b, 0x00);
+	SDL_RenderClear(gRenderer);
+	return true;
 }

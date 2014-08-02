@@ -5,16 +5,18 @@
 #include "Functions.h"
 #include "Graphics.h"
 #include "EntityControl.h"
+#include "World.h"
 
 #include <stdio.h>
 
 //Basic Map object constructor
-Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT)
+Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT, World* world)
 {
 	//set to 0, since the map streches over the entire level
 	x = 0;
 	y = 0;
 	this->graphics = graphics;
+	
 	//init the constants
 	this->MAP_WIDTH = MAP_WIDTH;
 	this->MAP_HEIGHT = MAP_HEIGHT;
@@ -30,6 +32,8 @@ Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT)
 	}
 	//Initialize height array
 	segHeight = new Uint8[*MAP_WIDTH];
+
+	this->world = world;
 }
 
 //Map destructor
@@ -128,7 +132,9 @@ int Map::getHeightSegment(int x)
 //Render the map via graphics
 void Map::render()
 {
-
+	//Draw Background
+	graphics->drawBackground(world->getRedSkyColor(), world->getGreenSkyColor(), world->getBlueSkyColor());
+	
 	int cameraX = graphics->getCameraX();
 	int cameraY = graphics->getCameraY();
 

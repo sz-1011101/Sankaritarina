@@ -33,7 +33,7 @@ EntityControl::~EntityControl()
 bool EntityControl::addNewEntity(Entity* entity)
 {
 	//Entity addable?
-	if (entities.size() < MAX_ENTITIES)
+	if ((int)entities.size() < MAX_ENTITIES)
 	{
 		entities.push_back(entity);
 		printf("Entity added, current total= %i\n", entities.size());
@@ -86,7 +86,7 @@ void EntityControl::collisionsMap(Entity* entity)
 Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
 	int xPos = tileX*(map->MAP_TILE_WIDTH_HEIGHT) - 24;
-	int yPos = ((*map->MAP_HEIGHT - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 54;
+	int yPos = ((*map->MAP_HEIGHT - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 56;
 	Tree* spawnedTree = new Tree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world, seeded);
 	//return if successful
 	if (addNewEntity(spawnedTree))

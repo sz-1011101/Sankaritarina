@@ -27,4 +27,6 @@ v0.001:
 -Lots of entity handling, tree generation and drawing, enum def cleanup (hopefully)
 -Tree positioning, basic dynamic spawning, some fixes
 
-TODO: Color modulation, time, controls handling, some cleanup
+-Drawing changes, Day Night Sky cycle
+
+TODO: Color modulation for entities, time, controls handling, some cleanup

@@ -32,9 +32,9 @@ int main(int argc, char* args[])
 	int const FPS_LOCK = 30;
 	int const MAP_WIDTH = 1000;
 	int const MAP_HEIGHT = 200;
-	int const CAMERA_MAX_X = (MAP_WIDTH-1)*8-1280;
-	int const CAMERA_MAX_Y = (MAP_HEIGHT-1)*8-720;
-	
+	int const CAMERA_MAX_X = (MAP_WIDTH - 1) * 8 - 1280;
+	int const CAMERA_MAX_Y = (MAP_HEIGHT - 1) * 8 - 720;
+
 	int framerate = 0;
 	int frameStartTime = 0;
 	int frameEndTime = 0;
@@ -50,15 +50,17 @@ int main(int argc, char* args[])
 	graphics->initFont("fonts/Munro.ttf", 20);
 
 	Timer* fpsTimer = new Timer();
-	Map* myMap = new Map(graphics, &MAP_WIDTH, &MAP_HEIGHT);
 	World* world = new World();
+	Map* myMap = new Map(graphics, &MAP_WIDTH, &MAP_HEIGHT, world);
+
 	EntityControl* entityControl = new EntityControl(myMap, graphics, world);
 	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);
 	Text* fps = new Text("init fps...", 10, 700, 255, 255, 255, NULL, graphics);
+	Text* time = new Text("init time....", 10, 10, 255, 255, 0, NULL, graphics);
 
-	myMap->generateMap(1, 1, 50,10,entityControl); //Generate Test map
+	myMap->generateMap(1, 1, 50, 10, entityControl); //Generate Test map
 	std::stringstream fps_string;
-
+	std::stringstream time_string;
 
 
 	status = ControlsEnumeration::CTRL_STATUS_MOVING_CAMERA;
@@ -68,21 +70,25 @@ int main(int argc, char* args[])
 		//--------------------Start doing frame---------------------------//
 		//Proccess Input, update status
 		status = controls->processInput(status, framerate);
+		world->advance(framerate);
+
+		//Draw Map
+		graphics->drawRenderable(myMap);
 
 		entityControl->entityInteraction(framerate);
 		//Test drawing
-		graphics->drawRenderable(myMap);
+		
 		graphics->drawRenderable(notice);
 		graphics->drawRenderable(fps);
+		graphics->drawRenderable(time);
 
 		graphics->graphicsRender();
-
 		//delay if Time left
 		if (fpsTimer->getTime() - frameStartTime < 1000 / FPS_LOCK)
 		{
-			SDL_Delay((1000 / FPS_LOCK) - (fpsTimer->getTime() - frameStartTime));
+			SDL_Delay((1000 / FPS_LOCK) - (fpsTimer->getTime() - frameStartTime)); //This seems to behave strangly sometimes
+			
 		}
-
 		//-----------------------Done doing frame------------------------//
 		frameEndTime = fpsTimer->getTime();
 
@@ -91,6 +97,10 @@ int main(int argc, char* args[])
 		fps_string.str("");
 		fps_string << "FPS: " << framerate << " Locked at: " << FPS_LOCK;
 		fps->updateText(fps_string.str());
+
+		//Time display
+		time->updateText(world->getTimeString());
+
 	}
 
 	delete camera;

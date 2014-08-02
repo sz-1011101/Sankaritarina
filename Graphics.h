@@ -24,6 +24,9 @@ public:
 	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, bool useCamera);
 	bool drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera);
 	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera);
+	bool drawBackground(Uint8 r, Uint8 g, Uint8 b);
+	bool setColorMod(Uint8 r, Uint8 g, Uint8 b);
+
 	int getCameraX();
 	int getCameraY();
 	Texture* getTextures(TexturesEnumeration::TEXTURES_NAME texture);

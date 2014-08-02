@@ -11,7 +11,7 @@ class EntityControl
 public:
 
 	int const MAX_ENTITIES = 512;
-	int const MAX_TREES = MAX_ENTITIES / 2;
+	int const MAX_TREES = MAX_ENTITIES / 4;
 
 	EntityControl(Map* map, Graphics* graphics, World* world);
 	~EntityControl();
@@ -27,7 +27,7 @@ private:
 	Graphics* graphics;
 	const int TREE_FRAME_WIDTH = 64;
 	const int TREE_FRAME_HEIGHT = 64;
-	const int TREE_FRAMECOUNT = 7;
+	const int TREE_FRAMECOUNT = 8;
 
 
 	bool addNewEntity(Entity* entity);
