@@ -6,15 +6,18 @@
 /*
 Init constants
 */
-const Uint8 World::SKY_HOUR_TARGET_RED_COLOR[] = { 2, 2, 2, 2, 17, 52, 235, 241, 138, 84, 138, 87, 44, 12, 36, 22, 90, 102, 255, 255, 117, 27, 12, 7 };
+const Uint8 World::SKY_HOUR_TARGET_RED_COLOR[] =   { 2, 2, 2, 2, 17, 52, 235, 241, 138, 84, 138, 100, 90, 60, 36, 022, 90, 102, 255, 255, 117, 27, 12, 7 };
 const Uint8 World::SKY_HOUR_TARGET_GREEN_COLOR[] = { 23, 23, 23, 23, 58, 22, 63, 126, 130, 116, 196, 170, 148, 132, 136, 129, 122, 95, 125, 108, 57, 17, 18, 37 };
-const Uint8 World::SKY_HOUR_TARGET_BLUE_COLOR[] = { 38, 38, 38, 38, 121, 171, 231, 238, 238, 241, 242, 253, 252, 252, 247, 245, 248, 243, 197, 108, 240, 200, 101, 105 };
+const Uint8 World::SKY_HOUR_TARGET_BLUE_COLOR[] =  { 38, 38, 38, 38, 121, 171, 231, 238, 238, 241, 242, 253, 252, 252, 247, 245, 248, 243, 197, 108, 240, 200, 101, 105 };
+
+const Uint8 World::ENTITY_HOUR_TARGET_RED_COLOR_MOD[] = { 45, 50, 65, 70, 128, 200, 210, 230, 250, 255, 255, 255, 255, 255, 255, 255, 230, 225, 220, 215, 200, 150, 100, 50 };
+const Uint8 World::ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[] = { 50, 50, 50, 50, 60, 70, 100, 125, 200, 220, 255, 255, 255, 255, 255, 255, 150, 85, 80, 75, 85, 80, 75, 70 };
+const Uint8 World::ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[] = { 100, 100, 100, 90, 85, 80, 90, 100, 150, 200, 255, 255, 255, 255, 255, 255, 200, 150, 75, 70, 90, 95, 100, 100 };
 
 //World constructor
 World::World()
 {
 	hour = Functions::generateRandomNumber(6, 17);
-
 
 	//Set initial sky color
 	skyR = SKY_HOUR_TARGET_RED_COLOR[hour];
@@ -78,6 +81,7 @@ void World::advance(int framerate)
 	}
 	//effects
 	calcAndSetSkyColor();
+	calcAndSetEntityColorModulation();
 }
 
 std::string World::getTimeString()
@@ -134,8 +138,36 @@ void World::calcAndSetSkyColor()
 	skyB = (Uint8)((int)SKY_HOUR_TARGET_BLUE_COLOR[hour] + ((((double)minute) / 60)*deltaB));
 }
 
+void World::calcAndSetEntityColorModulation()
+{
+	int deltaR;
+	int deltaG;
+	int deltaB;
+
+	if (hour != 23)
+	{
+		deltaR = ENTITY_HOUR_TARGET_RED_COLOR_MOD[hour + 1] - ENTITY_HOUR_TARGET_RED_COLOR_MOD[hour];
+		deltaG = ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[hour + 1] - ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[hour];
+		deltaB = ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[hour + 1] - ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[hour];
+
+	}
+	else
+	{
+		deltaR = ENTITY_HOUR_TARGET_RED_COLOR_MOD[0] - ENTITY_HOUR_TARGET_RED_COLOR_MOD[23];
+		deltaG = ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[0] - ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[23];
+		deltaB = ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[0] - ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[23];
+
+	}
+
+	modR = (Uint8)((int)ENTITY_HOUR_TARGET_RED_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaR));
+	modG = (Uint8)((int)ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaG));
+	modB = (Uint8)((int)ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaB));
+
+	printf("mod R:%u G:%u B:%u\n", modR, modG, modB);
+}
+
 /*
-Color modulation getters
+Sky Colo getters
 */
 Uint8 World::getRedSkyColor()
 {
@@ -149,4 +181,21 @@ Uint8 World::getGreenSkyColor()
 Uint8 World::getBlueSkyColor()
 {
 	return skyB;
+}
+
+/*
+Color modulation getters
+*/
+Uint8 World::getRedColorMod()
+{
+	return modR;
+}
+
+Uint8 World::getGreenColorMod()
+{
+	return modG;
+}
+Uint8 World::getBlueColorMod()
+{
+	return modB;
 }

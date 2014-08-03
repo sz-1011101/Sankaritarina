@@ -16,7 +16,7 @@ Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT, World*
 	x = 0;
 	y = 0;
 	this->graphics = graphics;
-	
+
 	//init the constants
 	this->MAP_WIDTH = MAP_WIDTH;
 	this->MAP_HEIGHT = MAP_HEIGHT;
@@ -134,7 +134,7 @@ void Map::render()
 {
 	//Draw Background
 	graphics->drawBackground(world->getRedSkyColor(), world->getGreenSkyColor(), world->getBlueSkyColor());
-	
+
 	int cameraX = graphics->getCameraX();
 	int cameraY = graphics->getCameraY();
 
@@ -179,6 +179,16 @@ void Map::render()
 			case MapEnumeration::MAP_TILE_TYPE_EARTH:
 				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
 				break;
+			}
+			//color mod by worlds lighting for the surface tile
+			if (*MAP_HEIGHT-j==segHeight[i])
+			{
+				
+				graphics->setTextureColorMod(textureToDraw, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+			}
+			else
+			{
+				graphics->setTextureColorMod(textureToDraw, 255, 255, 255);
 			}
 			graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
 

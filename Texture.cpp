@@ -13,6 +13,9 @@ Texture::Texture()
 	SDL_Texture* texture = NULL;
 	textureWidth = 0;
 	textureHeight = 0;
+	modR = 255;
+	modG = 255;
+	modB = 255;
 }
 
 //Destructor of the Texture Class
@@ -69,9 +72,6 @@ bool Texture::loadTexture(std::string path, SDL_Renderer* renderer)
 	return true;
 }
 
-
-
-
 //get Texture
 SDL_Texture* Texture::getTexture()
 {
@@ -88,4 +88,30 @@ int Texture::getTextureWidth()
 int Texture::getTextureHeight()
 {
 	return textureHeight;
+}
+
+//Sets the color Modulation of this texture
+void Texture::setColorModulation(Uint8 r, Uint8 g, Uint8 b)
+{
+	modR = r;
+	modG = g;
+	modB = b;
+	//Set Color Modulation
+	SDL_SetTextureColorMod(texture,  modR, modG, modB);
+}
+
+/*
+Color mod getters
+*/
+Uint8 Texture::getColorModR()
+{
+	return modR;
+}
+Uint8 Texture::getColorModG()
+{
+	return modG;
+}
+Uint8 Texture::getColorModB()
+{
+	return modB;
 }

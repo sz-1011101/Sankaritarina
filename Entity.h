@@ -1,7 +1,8 @@
 #pragma once
 #include "Renderable.h"
-#include "Texture.h"
 #include "World.h"
+
+class Texture;
 
 class Entity : 
 	public Renderable

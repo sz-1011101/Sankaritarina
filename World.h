@@ -21,12 +21,20 @@ public:
 	Uint8 getGreenSkyColor();
 	Uint8 getBlueSkyColor();
 
+	Uint8 getRedColorMod();
+	Uint8 getGreenColorMod();
+	Uint8 getBlueColorMod();
+
 private:
 
 	const double SECOUND_INCREASE_FACTOR = 50;
 	static const Uint8 SKY_HOUR_TARGET_RED_COLOR[24];
 	static const Uint8 SKY_HOUR_TARGET_GREEN_COLOR[24];
 	static const Uint8 SKY_HOUR_TARGET_BLUE_COLOR[24];
+
+	static const Uint8 ENTITY_HOUR_TARGET_RED_COLOR_MOD[24];
+	static const Uint8 ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[24];
+	static const Uint8 ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[24];
 
 	WorldEnumeration::WORLD_SEASONS currentSeason = WorldEnumeration::WORLD_SEASON_SPRING;
 	int year = 1;
@@ -41,6 +49,11 @@ private:
 	Uint8 skyG;
 	Uint8 skyB;
 
+	Uint8 modR;
+	Uint8 modG;
+	Uint8 modB;
+
 	void calcAndSetSkyColor();
+	void calcAndSetEntityColorModulation();
 };
 

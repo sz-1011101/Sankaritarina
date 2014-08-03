@@ -148,8 +148,8 @@ TTF_Font*  Graphics::getFont()
 //Renders everything
 void Graphics::graphicsRender()
 {
-	
-		RenderListNode* node = toRender->getFirst();
+
+	RenderListNode* node = toRender->getFirst();
 	while (node != NULL) { //Iterate through the list
 		node->getRenderable()->render(); //Render renderables
 		node = node->getNext(); //next node
@@ -168,7 +168,7 @@ bool Graphics::drawTexture(Texture* texture, int x, int y, int w, int h, bool us
 	{
 		int mWidth = texture->getTextureWidth();
 		int mHeight = texture->getTextureHeight();
-
+		
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -195,7 +195,7 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 	{
 		int mWidth = gTextures[texture]->getTextureWidth();
 		int mHeight = gTextures[texture]->getTextureHeight();
-
+		
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -246,6 +246,7 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 {
 	if (texture != NULL)
 	{
+		
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -305,4 +306,18 @@ bool Graphics::drawBackground(Uint8 r, Uint8 g, Uint8 b)
 	SDL_SetRenderDrawColor(gRenderer, r, g, b, 0x00);
 	SDL_RenderClear(gRenderer);
 	return true;
+}
+
+//Modify a textures color mod
+void Graphics::setTextureColorMod(Texture* texture, Uint8 r, Uint8 g, Uint8 b)
+{
+	//Call for a texture modulation
+	texture->setColorModulation(r, g, b);
+}
+
+//Modify a textures color mod by texture name
+void Graphics::setTextureColorMod(TexturesEnumeration::TEXTURES_NAME texture, Uint8 r, Uint8 g, Uint8 b)
+{
+	//Call for a texture modulation
+	gTextures[texture]->setColorModulation(r, g, b);
 }
