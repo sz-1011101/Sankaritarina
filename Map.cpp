@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 //Basic Map object constructor
-Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT, World* world)
+Map::Map(Graphics* graphics, int mapWidth, int mapHeight, World* world)
 {
 	//set to 0, since the map streches over the entire level
 	x = 0;
@@ -18,20 +18,20 @@ Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT, World*
 	this->graphics = graphics;
 
 	//init the constants
-	this->MAP_WIDTH = MAP_WIDTH;
-	this->MAP_HEIGHT = MAP_HEIGHT;
-	map = new Uint8**[*MAP_WIDTH];
+	this->mapWidth = mapWidth;
+	this->mapHeight = mapHeight;
+	map = new Uint8**[mapWidth];
 	//Initialize the 3-dimensional matrix
-	for (int i = 0; i < *MAP_WIDTH; i++)
+	for (int i = 0; i < mapWidth; i++)
 	{
-		map[i] = new Uint8*[*MAP_HEIGHT];
-		for (int j = 0; j < *MAP_HEIGHT; j++)
+		map[i] = new Uint8*[mapHeight];
+		for (int j = 0; j < mapHeight; j++)
 		{
 			map[i][j] = new Uint8[MapEnumeration::MAP_TILE_ATR_TOTAL];
 		}
 	}
 	//Initialize height array
-	segHeight = new Uint8[*MAP_WIDTH];
+	segHeight = new Uint8[mapWidth];
 
 	this->world = world;
 }
@@ -40,9 +40,9 @@ Map::Map(Graphics* graphics, const int* MAP_WIDTH, const int* MAP_HEIGHT, World*
 Map::~Map()
 {
 	//free all allocated memory
-	for (int i = 0; i < *MAP_WIDTH; i++)
+	for (int i = 0; i < mapWidth; i++)
 	{
-		for (int j = 0; j < *MAP_HEIGHT; j++)
+		for (int j = 0; j < mapHeight; j++)
 		{
 			delete[] map[i][j];
 		}
@@ -55,7 +55,7 @@ Map::~Map()
 int Map::getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr)
 {
 	//check if valid position
-	if (x >= *MAP_WIDTH || y >= *MAP_HEIGHT || x < 0 || y < 0)
+	if (x >= mapWidth || y >= mapHeight || x < 0 || y < 0)
 	{
 		return -1;
 	}
@@ -76,7 +76,7 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, 
 	bool entityPut = false;
 	int flattedTiles = FLATTING;
 
-	for (int i = 0; i < *MAP_WIDTH; i++)
+	for (int i = 0; i < mapWidth; i++)
 	{
 		//Determine the grounds height or in case of placed entity, do nothing
 		if (!entityPut)
@@ -100,10 +100,10 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, 
 		//Set the segment's height
 		segHeight[i] = groundHeight;
 		//From the ground up create earth
-		for (int j = *MAP_HEIGHT - 1; j >= 0; j--)
+		for (int j = mapHeight - 1; j >= 0; j--)
 		{
 			//Place earth until upper limit reached (note that the y axis is "inverse")
-			if (j > (*MAP_HEIGHT - 1) - groundHeight)
+			if (j > (mapHeight - 1) - groundHeight)
 			{
 				map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_EARTH;
 			}
@@ -150,18 +150,18 @@ void Map::render()
 	{
 		firstIndexX = 0;
 	}
-	if (lastIndexX >= *MAP_WIDTH)
+	if (lastIndexX >= mapWidth)
 	{
-		lastIndexX = *MAP_WIDTH - 1;
+		lastIndexX = mapWidth - 1;
 	}
 
 	if (firstIndexY < 0)
 	{
 		firstIndexY = 0;
 	}
-	if (lastIndexY >= *MAP_HEIGHT)
+	if (lastIndexY >= mapHeight)
 	{
-		lastIndexY = *MAP_HEIGHT - 1;
+		lastIndexY = mapHeight - 1;
 	}
 
 	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
@@ -181,9 +181,9 @@ void Map::render()
 				break;
 			}
 			//color mod by worlds lighting for the surface tile
-			if (*MAP_HEIGHT-j==segHeight[i])
+			if (mapHeight - j == segHeight[i])
 			{
-				
+
 				graphics->setTextureColorMod(textureToDraw, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 			}
 			else
@@ -194,4 +194,14 @@ void Map::render()
 
 		}
 	}
+}
+
+int Map::getMapWidth()
+{
+	return mapWidth;
+}
+
+int Map::getMapHeight()
+{
+	return mapHeight;
 }

@@ -51,7 +51,7 @@ int main(int argc, char* args[])
 
 	Timer* fpsTimer = new Timer();
 	World* world = new World();
-	Map* myMap = new Map(graphics, &MAP_WIDTH, &MAP_HEIGHT, world);
+	Map* myMap = new Map(graphics, MAP_WIDTH, MAP_HEIGHT, world);
 
 	EntityControl* entityControl = new EntityControl(myMap, graphics, world);
 	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);

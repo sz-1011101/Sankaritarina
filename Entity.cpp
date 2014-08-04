@@ -20,6 +20,7 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FR
 	this->FRAME_WIDTH = FRAME_WIDTH;
 	this->FRAME_HEIGHT = FRAME_HEIGHT;
 	this->world = world;
+	currentEntityZone = NULL;
 }
 
 //Destructor
@@ -53,4 +54,28 @@ void Entity::proceed(int framerate)
 bool Entity::flaggedForRemoval()
 {
 	return false;
+}
+
+//Gets current zone that the entity holds
+EntityZone* Entity::getCurrentEntityZone()
+{
+	return currentEntityZone;
+}
+
+//Sets the current zone for this entity
+void Entity::setCurrentEntityZone(EntityZone* entityZone)
+{
+	currentEntityZone = entityZone;
+}
+
+//Returns the x pos
+int Entity::getX()
+{
+	return x;
+}
+
+//Returns the y pos
+int Entity::getY()
+{
+	return y;
 }

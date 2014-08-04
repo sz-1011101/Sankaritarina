@@ -29,4 +29,7 @@ v0.001:
 
 -Drawing changes, Day Night Sky cycle
 
-TODO: Color modulation for entities, time, controls handling, some cleanup
+-Color modulation for entities, time
+-Basic zone assigning for entities
+
+TODO: Zone handling improvements and testing, controls handling, some cleanup

@@ -162,8 +162,6 @@ void World::calcAndSetEntityColorModulation()
 	modR = (Uint8)((int)ENTITY_HOUR_TARGET_RED_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaR));
 	modG = (Uint8)((int)ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaG));
 	modB = (Uint8)((int)ENTITY_HOUR_TARGET_BLUE_COLOR_MOD[hour] + ((((double)minute) / 60)*deltaB));
-
-	printf("mod R:%u G:%u B:%u\n", modR, modG, modB);
 }
 
 /*
