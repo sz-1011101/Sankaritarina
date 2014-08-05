@@ -1,6 +1,7 @@
 //This class handles camera movement and positioning
 #include "Camera.h"
 
+
 //Camera constructor
 Camera::Camera(int x, int y, int const* CAMERA_MAX_X, int const* CAMERA_MAX_Y)
 {

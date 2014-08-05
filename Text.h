@@ -9,10 +9,11 @@ class Text :
 {
 public:
 
-	Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Font* font, Graphics* graphics);
+	Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Font* font, Graphics* graphics, bool useCamera);
 	~Text();
 	virtual void render();
 	void updateText(std::string newText);
+	void setTextPos(int x, int y);
 
 private:
 
@@ -22,9 +23,9 @@ private:
 	SDL_Texture* texture;
 	int textWidth;
 	int textHeight;
-	int lineDistance;
 	bool initText(std::string displayedText, SDL_Color color, TTF_Font* font, Graphics* graphics);
 	void clearText();
+	bool useCamera;
 
 };
 

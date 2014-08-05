@@ -29,7 +29,7 @@ int main(int argc, char* args[])
 	int const SCREEN_WIDTH = 1280;
 	int const SCREEN_HEIGHT = 720;
 
-	int const FPS_LOCK = 30;
+	int const FPS_LOCK = 999;
 	int const MAP_WIDTH = 1000;
 	int const MAP_HEIGHT = 200;
 	int const CAMERA_MAX_X = (MAP_WIDTH - 1) * 8 - 1280;
@@ -47,16 +47,16 @@ int main(int argc, char* args[])
 	//Init some textures
 	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
 	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
-	graphics->initFont("fonts/Munro.ttf", 20);
+	graphics->initFont("fonts/Munro.ttf", 9); //Init font
 
 	Timer* fpsTimer = new Timer();
 	World* world = new World();
 	Map* myMap = new Map(graphics, MAP_WIDTH, MAP_HEIGHT, world);
 
 	EntityControl* entityControl = new EntityControl(myMap, graphics, world);
-	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);
-	Text* fps = new Text("init fps...", 1150, 10, 255, 255, 255, NULL, graphics);
-	Text* time = new Text("init time....", 10, 10, 255, 255, 0, NULL, graphics);
+	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics,false);
+	Text* fps = new Text("init fps...", 1150, 10, 255, 255, 255, NULL, graphics, false);
+	Text* time = new Text("init time....", 10, 10, 255, 255, 0, NULL, graphics, false);
 
 	myMap->generateMap(1, 1, 50, 10, entityControl); //Generate Test map
 	std::stringstream fps_string;
@@ -73,14 +73,14 @@ int main(int argc, char* args[])
 		world->advance(framerate);
 
 		//Draw Map
-		graphics->drawRenderable(myMap);
+		graphics->drawRenderable(myMap,false);
 
 		entityControl->entityInteraction(framerate);
 		//Test drawing
 
-		graphics->drawRenderable(notice);
-		graphics->drawRenderable(fps);
-		graphics->drawRenderable(time);
+		graphics->drawRenderable(notice,false);
+		graphics->drawRenderable(fps,false);
+		graphics->drawRenderable(time,false);
 
 		graphics->graphicsRender();
 		//delay if Time left

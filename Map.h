@@ -1,9 +1,9 @@
 #pragma once
 #include "MapEnumeration.h"
 #include "Graphics.h"
+#include "Renderable.h"
 
 class World;
-
 class EntityControl;
 
 class Map :

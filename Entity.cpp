@@ -1,7 +1,9 @@
 //This class handles common Entities
+#include <stdio.h>
+
 #include "Entity.h"
 #include "Graphics.h"
-#include <stdio.h>
+#include "Text.h"
 
 /* Entity Cnstructor
 	int x Postion x
@@ -12,7 +14,7 @@
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
 	*/
-Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world) : Renderable(x, y, graphics)
+Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, int id) : Renderable(x, y, graphics)
 {
 	this->texture = texture;
 	currentFrame = 0;
@@ -20,22 +22,27 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FR
 	this->FRAME_WIDTH = FRAME_WIDTH;
 	this->FRAME_HEIGHT = FRAME_HEIGHT;
 	this->world = world;
+	this->id = id;
 	currentEntityZone = NULL;
+	debugText = new Text("Entity", x, y, 255, 255, 255, NULL, graphics, true);
 }
 
 //Destructor
 Entity::~Entity()
 {
+	printf("Deallocating text object");
+	delete debugText;
 }
 
 //render function for Entity
 void Entity::render()
 {
-	//Dummy
+	//Dummy - just loops through
 	int frameCount = *FRAME_COUNT;
 	if (currentFrame >= frameCount) {
 		currentFrame = 0;
 	}
+
 	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
 	currentFrame++;
 }
@@ -46,11 +53,13 @@ void Entity::calcFrame(int framerate)
 
 }
 
+//Entity processing
 void Entity::proceed(int framerate)
 {
 
 }
 
+//Return if flagged for removal
 bool Entity::flaggedForRemoval()
 {
 	return false;
@@ -68,14 +77,20 @@ void Entity::setCurrentEntityZone(EntityZone* entityZone)
 	currentEntityZone = entityZone;
 }
 
-//Returns the x pos
-int Entity::getX()
+//Get Debug text
+Text* Entity::getDebugText()
 {
-	return x;
+	return debugText;
 }
 
-//Returns the y pos
-int Entity::getY()
+//Updates the debug text
+void Entity::updateDebugText()
 {
-	return y;
+
+}
+
+//returns the id of this entity
+int Entity::getId()
+{
+	return id;
 }

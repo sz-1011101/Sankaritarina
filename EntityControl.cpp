@@ -10,6 +10,7 @@
 #include "Functions.h"
 #include "EntityControl.h"
 #include "EntityZone.h"
+#include "Text.h"
 
 
 //Constructor
@@ -19,11 +20,18 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 	this->graphics = graphics;
 	this->world = world;
 	entities.reserve(MAX_ENTITIES); //Reserve enough space for the vector
-
+	idCounter = 0;
 	//Initialize entity zones
 
 	amountZones = ceil(map->getMapWidth() / 30.0); //The map gets partitioned in zones of 30 tiles
+
 	entityZones = new EntityZone[amountZones];
+
+	//Give the numbers of the zone, for debugging reasons
+	for (int i = 0; i < amountZones; i++)
+	{
+		entityZones[i].setZoneNumber(i);
+	}
 }
 
 //Deconstructor
@@ -47,7 +55,7 @@ bool EntityControl::addNewEntity(Entity* entity)
 	//Entity addable?
 	if ((int)entities.size() < MAX_ENTITIES)
 	{
-		entities.push_back(entity);
+		entities.push_back(entity); //Add the Entity
 		printf("Entity added, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
 		return true;
 	}
@@ -63,8 +71,9 @@ bool EntityControl::addNewEntity(Entity* entity)
 void EntityControl::entityInteraction(int framerate)
 {
 	//-----------------------Entity Handling-------------------------------//
-	entityZonesHandling(); //Assign zone
+	
 	vegetationHandling(); //Spawn more trees
+	entityZonesHandling(); //Assign zone
 
 	//-----------------Entity Removal and rendering------------------------//
 	std::vector<Entity*>::iterator entityIterator = entities.begin();
@@ -73,6 +82,8 @@ void EntityControl::entityInteraction(int framerate)
 	{
 		if ((*entityIterator)->flaggedForRemoval())
 		{
+			//Remove this from the zone
+			(*entityIterator)->getCurrentEntityZone()->removeEntityFromZone((*entityIterator)->getId());
 			delete (*entityIterator); //Deallocate
 			entityIterator = entities.erase(entityIterator); //erase and put at new position
 			printf("Entity removed, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
@@ -80,17 +91,21 @@ void EntityControl::entityInteraction(int framerate)
 		else
 		{
 			(*entityIterator)->proceed(framerate);
-			graphics->drawRenderable(*entityIterator); //Clear for rendering
+			graphics->drawRenderable(*entityIterator,true); //Clear for rendering
 			entityIterator++;
 		}
 	}
+	//--------------------------Entity debug text--------------------------//
+	entityDebugTextHandling();
 
 }
 
 //Handles collisions of an entity with the map
 void EntityControl::collisionsMap(Entity* entity)
 {
-
+	/*
+	TODO
+	*/
 }
 
 //Spawns a tree, returns pointer if successful, NULL otherwise
@@ -98,7 +113,7 @@ Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
 	int xPos = tileX*(map->MAP_TILE_WIDTH_HEIGHT) - 24;
 	int yPos = ((map->getMapHeight() - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 56;
-	Tree* spawnedTree = new Tree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world, seeded);
+	Tree* spawnedTree = new Tree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world, seeded, ++idCounter);
 	//return if successful
 	if (addNewEntity(spawnedTree))
 	{
@@ -123,13 +138,9 @@ void EntityControl::vegetationHandling()
 }
 
 //Puts the Entities in their respective zones
+//TODO Change the zones so that they use hashmaps
 void EntityControl::entityZonesHandling()
 {
-	//Clear all zones
-	for (int i = 0; i < amountZones; i++)
-	{
-		entityZones[i].entities.clear();
-	}
 
 	int zone;
 
@@ -137,7 +148,35 @@ void EntityControl::entityZonesHandling()
 	for (std::vector<Entity*>::iterator entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
 	{
 		zone = ((*entityIterator)->getX() / map->MAP_TILE_WIDTH_HEIGHT) / ZONE_WIDTH;
-		(*entityIterator)->setCurrentEntityZone(&entityZones[zone]);
-		entityZones[zone].entities.push_back((*entityIterator));
+		EntityZone* oldEntityZone = (*entityIterator)->getCurrentEntityZone();
+		EntityZone* newEntityZone = &entityZones[zone];
+
+		//Check if the zones have changed, and correct if needed
+		if (oldEntityZone != NULL)
+		{
+
+			if (oldEntityZone != newEntityZone)
+			{
+				(*entityIterator)->setCurrentEntityZone(newEntityZone);
+				newEntityZone->addEntityToZone(*entityIterator, (*entityIterator)->getId());
+				oldEntityZone->removeEntityFromZone((*entityIterator)->getId());
+			}
+		}
+		else //Otherwise set the zone for the first time
+		{
+			(*entityIterator)->setCurrentEntityZone(newEntityZone);
+			newEntityZone->addEntityToZone(*entityIterator, (*entityIterator)->getId());
+		}
+		
+	}
+}
+
+//Handles the debug text output for entities
+void EntityControl::entityDebugTextHandling()
+{
+	//Run over all entities
+	for (std::vector<Entity*>::iterator entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
+	{
+		graphics->drawRenderable((*entityIterator)->getDebugText(),true);
 	}
 }

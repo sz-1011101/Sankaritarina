@@ -6,6 +6,7 @@
 #include "ControlsEnumeration.h"
 #include "Functions.h"
 
+
 //Constructor, provide with a camera
 Controls::Controls(Camera* camera)
 {

@@ -11,6 +11,9 @@ public:
 	~Renderable();
 	virtual void render();
 
+	int getX();
+	int getY();
+
 protected:
 
 	Graphics* graphics;

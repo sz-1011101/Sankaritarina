@@ -4,9 +4,10 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #include "Graphics.h"
-#include "RenderList.h"
+#include "RenderVector.h"
 
 
 
@@ -51,7 +52,7 @@ bool Graphics::initGraphics()
 
 	printf("Initializing Graphics...\n");
 
-	toRender = new RenderList; //Initialize Render List
+	toRender = new RenderVector; //Initialize Render List
 
 	//Print Error if not successful
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -148,14 +149,13 @@ TTF_Font*  Graphics::getFont()
 //Renders everything
 void Graphics::graphicsRender()
 {
-
-	RenderListNode* node = toRender->getFirst();
-	while (node != NULL) { //Iterate through the list
-		node->getRenderable()->render(); //Render renderables
-		node = node->getNext(); //next node
-		toRender->removeFirst(); //remove the head of the list
+	std::vector<Renderable*>::iterator renderableIterator;
+	
+	for (renderableIterator = toRender->getRenderVector()->begin(); renderableIterator != toRender->getRenderVector()->end(); renderableIterator++)
+	{
+		(*renderableIterator)->render();
 	}
-
+	toRender->clearRenderVector();
 	//Update screen
 	SDL_RenderPresent(gRenderer);
 }
@@ -271,13 +271,29 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 
 
 //Adds the Renderable object to the RenderList, to draw with graphicsRender()
-bool Graphics::drawRenderable(Renderable* renderable)
+bool Graphics::drawRenderable(Renderable* renderable, bool useCamera)
 {
 	if (renderable != NULL) {
-		toRender->addRenderable(renderable);
-		return true;
+		if ((useCamera && checkRenderableVisible(renderable)) || !useCamera)
+		{
+			toRender->addRenderable(renderable);
+			return true;
+		}	
 	}
 
+	return false;
+}
+
+//Checks if the renderable object is visible to the Camera
+bool Graphics::checkRenderableVisible(Renderable* renderable)
+{
+	if (renderable->getX() >= gCamera->getCameraX() && renderable->getX() < gCamera->getCameraX() + *SCREEN_WIDTH)
+	{
+		if (renderable->getY() >= gCamera->getCameraY() && renderable->getY() < gCamera->getCameraY() + *SCREEN_HEIGHT)
+		{
+			return true;
+		}
+	}
 	return false;
 }
 

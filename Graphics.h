@@ -1,8 +1,10 @@
 #pragma once
 #include "Texture.h"
 #include "TexturesEnumeration.h"
-#include "RenderList.h"
 #include "Camera.h"
+
+class RenderVector;
+class Renderable;
 
 class Graphics
 {
@@ -19,7 +21,7 @@ public:
 	Texture* initTexture(std::string path, TexturesEnumeration::TEXTURES_NAME textureName);
 	bool initFont(std::string path, int size);
 	void graphicsRender();
-	bool drawRenderable(Renderable* renderable);
+	bool drawRenderable(Renderable* renderable, bool useCamera);
 	bool drawTexture(Texture* texture, int x, int y, int w, int h, bool useCamera);
 	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, bool useCamera);
 	bool drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera);
@@ -39,13 +41,13 @@ private:
 																after initializing the texture with initTexture(...);
 																*/
 	TTF_Font*  gFont = NULL;
-	RenderList* toRender;
+	RenderVector* toRender;
 	Camera* gCamera;
 	SDL_Window* gWindow;
 	SDL_Renderer* gRenderer;
 
 	bool initGraphics();
 	void closeGraphics();
-
+	bool checkRenderableVisible(Renderable* renderable);
 };
 

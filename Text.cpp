@@ -10,7 +10,7 @@
 #include "Graphics.h"
 
 //Constructor
-Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Font* font, Graphics* graphics)
+Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Font* font, Graphics* graphics, bool useCamera)
 {
 	text = displayedText;
 
@@ -21,7 +21,7 @@ Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Fon
 	this->graphics = graphics;
 	this->x = x;
 	this->y = y;
-	this->lineDistance = lineDistance;
+	this->useCamera = useCamera;
 	//Create the texture
 	if (!initText(displayedText, color, font, graphics))
 	{
@@ -96,7 +96,15 @@ void Text::updateText(std::string newText)
 	initText(newText, this->color, this->font, this->graphics);
 }
 
+//Renders the text object
 void Text::render()
 {
-	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, false); //Draw the Texture directly
+	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, useCamera); //Draw the Texture directly
+}
+
+//Set this text objects position
+void Text::setTextPos(int x, int y)
+{
+	this->x = x;
+	this->y = y;
 }

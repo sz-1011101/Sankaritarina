@@ -1,10 +1,14 @@
-#include "Tree.h"
-#include "Functions.h"
+//This class handles trees
 #include "World.h"
 #include <stdio.h>
 
+#include "Tree.h"
+#include "Functions.h"
+#include "Text.h"
+#include "EntityZone.h"
+
 //Tree constructor, calling superclass
-Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded) : Entity(x, y, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world)
+Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded, int id) : Entity(x, y, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world, id)
 {
 	using namespace TreeEnumeration;
 	//Spawn as a tiny seed or at a random size
@@ -20,6 +24,7 @@ Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_
 
 	growth = Functions::generateRandomNumber(0, 50);
 	maxGrothFullSize = TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
+	entityName = "Tree";
 }
 
 //Tree Destructor
@@ -35,6 +40,7 @@ void Tree::render()
 	graphics->setTextureColorMod(texture, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	//draw frame of the tree
 	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+
 }
 
 //Calc frame of the displayed tree
@@ -111,20 +117,18 @@ void Tree::growTree(int framerate, double rate)
 	}
 	//Tree grows
 	growth = growth + (rate*Functions::calculateFrameFactor(framerate));
-
-
 }
 
 //Process Tree
 void Tree::proceed(int framerate)
 {
 	growTree(framerate, 1);
+	updateDebugText();
 }
 
 //Returns if this tree is dead and therefor is obsolete
 bool Tree::flaggedForRemoval()
 {
-
 	if (treeState == TreeEnumeration::TREE_DISAPPEARED)
 	{
 		return true;
@@ -133,5 +137,18 @@ bool Tree::flaggedForRemoval()
 	{
 
 		return false;
+	}
+}
+
+//Updates the debug text for this tree
+void Tree::updateDebugText()
+{
+	std::stringstream debugStream;
+	debugStream.str("");
+	if (currentEntityZone != NULL)
+	{
+		debugStream <<"id:" << id << " "<< entityName << "\n" << "Zone: " << currentEntityZone->getZoneNumber();
+		debugText->updateText(debugStream.str()); //Update the text
+		debugText->setTextPos(x, y); //Update the position to the trees position
 	}
 }

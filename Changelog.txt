@@ -33,4 +33,6 @@ v0.001:
 -Basic zone assigning for entities
 -Multiline textrendering added
 
-TODO: Zone handling improvements and testing, controls handling, some cleanup
+-Debugging output, some zone handling
+
+TODO: Zone performance improvements, controls handling, some cleanup

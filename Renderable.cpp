@@ -23,3 +23,15 @@ void Renderable::render()
 {
 
 }
+
+//Returns the x pos
+int Renderable::getX()
+{
+	return x;
+}
+
+//Returns the y pos
+int Renderable::getY()
+{
+	return y;
+}

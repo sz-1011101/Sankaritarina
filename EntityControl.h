@@ -6,16 +6,17 @@
 #include "Map.h"
 #include "World.h"
 
+
 class EntityZone;
 
 class EntityControl
 {
 public:
 
-	int const MAX_ENTITIES = 512;
-	int const MAX_TREES = MAX_ENTITIES / 4;
-	int const ZONE_WIDTH = 30;
-
+	const int  MAX_ENTITIES = 2048;
+	const int MAX_TREES = MAX_ENTITIES;
+	const int ZONE_WIDTH = 30;
+	const bool ENTITY_DEBUGGING_ACTIVE = true;
 	EntityControl(Map* map, Graphics* graphics, World* world);
 	~EntityControl();
 	Tree* spawnTree(int tileX, int tileY, bool seeded);
@@ -34,10 +35,13 @@ private:
 	const int TREE_FRAME_HEIGHT = 64;
 	const int TREE_FRAMECOUNT = 8;
 	int amountZones;
+	int idCounter;
 
 	bool addNewEntity(Entity* entity);
 	void collisionsMap(Entity* entity);
 	void vegetationHandling();
 	void entityZonesHandling();
+	void entityDebugTextHandling();
+
 };
 
