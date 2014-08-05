@@ -233,7 +233,6 @@ bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, 
 		{
 			rSquare = { x, y, w, h };
 		}
-
 		SDL_RenderCopy(gRenderer, texture, NULL, &rSquare);
 
 		return true;

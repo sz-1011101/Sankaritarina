@@ -3,6 +3,9 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <sstream>
+#include <algorithm>
+
 #include "Text.h"
 #include "Graphics.h"
 
@@ -18,6 +21,7 @@ Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Fon
 	this->graphics = graphics;
 	this->x = x;
 	this->y = y;
+	this->lineDistance = lineDistance;
 	//Create the texture
 	if (!initText(displayedText, color, font, graphics))
 	{
@@ -29,43 +33,58 @@ Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Fon
 //Destructor
 Text::~Text()
 {
+	clearText();
+}
+
+//Deallocate
+void Text::clearText()
+{
 	SDL_DestroyTexture(texture);
 }
 
 //Initialize the texure from provided text
 bool Text::initText(std::string displayedText, SDL_Color color, TTF_Font* font, Graphics* graphics)
 {
-
 	SDL_Surface* loadedSurface = NULL;
+
+	textWidth = 0;
+	textHeight = 0;
+
+
 	//Use the font of provided graphics if no own font provided
 	if (font == NULL)
 	{
-		loadedSurface = TTF_RenderText_Solid(graphics->getFont(), displayedText.c_str(), color);
+		loadedSurface = TTF_RenderText_Blended_Wrapped(graphics->getFont(), displayedText.c_str(), color,300);
 	}
 	else
 	{
-		loadedSurface = TTF_RenderText_Solid(font, displayedText.c_str(), color);
+		loadedSurface = TTF_RenderText_Blended_Wrapped(font, displayedText.c_str(), color, 300);
 	}
-
 	if (loadedSurface == NULL)
 	{
-		printf("Error creating surface from text \"%s\" Error: %s\n", (std::string)displayedText, SDL_GetError());
+		printf("Error creating surface from text \"%s\" Error: %s\n", displayedText.c_str(), SDL_GetError());
 		return false;
 	}
 	else
 	{
 		//Create the texture
 		texture = SDL_CreateTextureFromSurface(graphics->getGRenderer(), loadedSurface);
+
+		//Check the last element if correct
 		if (texture == NULL)
 		{
 			printf("Error while creating texture from surface (text) Error %s\n", SDL_GetError());
 			return false;
 		}
+
 		//Set width,height
 		textWidth = loadedSurface->w;
 		textHeight = loadedSurface->h;
-		SDL_FreeSurface(loadedSurface); //Remove the Surface
+
+		//Free current surface
+		SDL_FreeSurface(loadedSurface); 
 	}
+
 	return true;
 }
 
@@ -73,12 +92,11 @@ bool Text::initText(std::string displayedText, SDL_Color color, TTF_Font* font, 
 void Text::updateText(std::string newText)
 {
 	this->text = newText;
-	SDL_DestroyTexture(texture);
-	initText(newText, this->color, this->font,this->graphics);
+	clearText();
+	initText(newText, this->color, this->font, this->graphics);
 }
 
 void Text::render()
 {
-	//Draw the Texture directly
-	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, false);
+	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, false); //Draw the Texture directly
 }

@@ -55,7 +55,7 @@ int main(int argc, char* args[])
 
 	EntityControl* entityControl = new EntityControl(myMap, graphics, world);
 	Text* notice = new Text("This is a very early test build", 10, 680, 255, 255, 255, NULL, graphics);
-	Text* fps = new Text("init fps...", 10, 700, 255, 255, 255, NULL, graphics);
+	Text* fps = new Text("init fps...", 1150, 10, 255, 255, 255, NULL, graphics);
 	Text* time = new Text("init time....", 10, 10, 255, 255, 0, NULL, graphics);
 
 	myMap->generateMap(1, 1, 50, 10, entityControl); //Generate Test map
@@ -77,7 +77,7 @@ int main(int argc, char* args[])
 
 		entityControl->entityInteraction(framerate);
 		//Test drawing
-		
+
 		graphics->drawRenderable(notice);
 		graphics->drawRenderable(fps);
 		graphics->drawRenderable(time);
@@ -87,7 +87,7 @@ int main(int argc, char* args[])
 		if (fpsTimer->getTime() - frameStartTime < 1000 / FPS_LOCK)
 		{
 			SDL_Delay((1000 / FPS_LOCK) - (fpsTimer->getTime() - frameStartTime)); //This seems to behave strangly sometimes
-			
+
 		}
 		//-----------------------Done doing frame------------------------//
 		frameEndTime = fpsTimer->getTime();
@@ -95,7 +95,7 @@ int main(int argc, char* args[])
 		//Fps counter
 		framerate = 1000 / (frameEndTime - frameStartTime);
 		fps_string.str("");
-		fps_string << "FPS: " << framerate << " Locked at: " << FPS_LOCK;
+		fps_string << "FPS: " << framerate << " \nLocked at: " << FPS_LOCK;
 		fps->updateText(fps_string.str());
 
 		//Time display
