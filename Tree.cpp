@@ -5,10 +5,10 @@
 #include "Tree.h"
 #include "Functions.h"
 #include "Text.h"
-#include "EntityZone.h"
+
 
 //Tree constructor, calling superclass
-Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded, int id) : Entity(x, y, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world, id)
+Tree::Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world, id)
 {
 	using namespace TreeEnumeration;
 	//Spawn as a tiny seed or at a random size
@@ -47,11 +47,11 @@ void Tree::render()
 void Tree::calcFrame(int framerate)
 {
 	using namespace TreeEnumeration;
-
+	//Set frame according to state
 	if (treeState == TREE_FULL_SIZE)
 	{
 		currentFrame = TREE_FULL_SIZE + world->getCurrentSeason();
-		//Set frame according to status
+
 	}
 	else
 	{
@@ -89,34 +89,37 @@ void Tree::growTree(int framerate, double rate)
 
 	int growthCap[6] = { TREE_GROWTH_RATE_SEEDED_TO_SAPLING, TREE_GROWTH_RATE_SAPLING_TO_BIGGER_SAPPLING, TREE_GROWTH_RATE_BIGGER_SAPPLING_TO_SMALL, TREE_GROWTH_RATE_SMALL_TO_FULL_SIZE, (int)maxGrothFullSize, TREE_GROWTH_RATE_DEATH_TO_DISAPPEAR };
 
-	//Tree increments state
-	if (growthCap[treeState] <= (int)growth)
+	if (treeState < TREE_DISAPPEARED)
 	{
-		switch (treeState)
+		//Tree increments state
+		if (growthCap[treeState] <= (int)growth)
 		{
-		case TREE_SEEDED:
-			treeState = TREE_SAPLING;
-			break;
-		case TREE_SAPLING:
-			treeState = TREE_BIGGER_SAPLING;
-			break;
-		case TREE_BIGGER_SAPLING:
-			treeState = TREE_SMALL;
-			break;
-		case TREE_SMALL:
-			treeState = TREE_FULL_SIZE;
-			break;
-		case TREE_FULL_SIZE:
-			treeState = TREE_DEAD;
-			break;
-		case TREE_DEAD:
-			treeState = TREE_DISAPPEARED;
-			break;
+			switch (treeState)
+			{
+			case TREE_SEEDED:
+				treeState = TREE_SAPLING;
+				break;
+			case TREE_SAPLING:
+				treeState = TREE_BIGGER_SAPLING;
+				break;
+			case TREE_BIGGER_SAPLING:
+				treeState = TREE_SMALL;
+				break;
+			case TREE_SMALL:
+				treeState = TREE_FULL_SIZE;
+				break;
+			case TREE_FULL_SIZE:
+				treeState = TREE_DEAD;
+				break;
+			case TREE_DEAD:
+				treeState = TREE_DISAPPEARED;
+				break;
+			}
+			growth = 0;
 		}
-		growth = 0;
+		//Tree grows
+		growth = growth + (rate*Functions::calculateFrameFactor(framerate));
 	}
-	//Tree grows
-	growth = growth + (rate*Functions::calculateFrameFactor(framerate));
 }
 
 
@@ -124,13 +127,13 @@ void Tree::growTree(int framerate, double rate)
 void Tree::proceed(int framerate)
 {
 	growTree(framerate, 1);
-	//Only update text if something relevant was changed befor
+	//Only update text if something relevant was changed before
 	if (entityChanged)
 	{
 		updateDebugText();
 		entityChanged = false;
 	}
-	
+
 }
 
 //Returns if this tree is dead and therefor is obsolete
@@ -142,20 +145,6 @@ bool Tree::flaggedForRemoval()
 	}
 	else
 	{
-
 		return false;
-	}
-}
-
-//Updates the debug text for this tree
-void Tree::updateDebugText()
-{
-	std::stringstream debugStream;
-	debugStream.str("");
-	if (currentEntityZone != NULL)
-	{
-		debugStream <<"id:" << id << " "<< entityName << "\n" << "Zone: " << currentEntityZone->getZoneNumber();
-		debugText->updateText(debugStream.str()); //Update the text
-		debugText->setTextPos(x, y); //Update the position to the trees position
 	}
 }

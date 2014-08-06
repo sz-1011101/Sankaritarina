@@ -3,6 +3,7 @@
 
 #include "Renderable.h"
 #include "World.h"
+#include "EntityStruct.h"
 
 class Texture;
 class EntityZone;
@@ -13,7 +14,7 @@ class Entity :
 {
 public:
 
-	Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, int id);
+	Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, int id);
 	~Entity();
 	virtual void render();
 	virtual void calcFrame(int framerate);
@@ -25,6 +26,7 @@ public:
 	int getId();
 
 	Text* getDebugText();
+	void updateForces();
 
 protected:
 
@@ -38,8 +40,11 @@ protected:
 	EntityZone* currentEntityZone;
 	std::string entityName;
 	int id;
+	EntityStruct::entityForces forces;
 	bool entityChanged;
-	virtual void updateDebugText();
+
+	void updateDebugText();
+	
 
 };
 

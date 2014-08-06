@@ -35,5 +35,6 @@ v0.001:
 
 -Debugging output, some zone handling
 -Fixed major performance hog caused by debug string updating
+-Added basic animal class
 
-TODO: controls handling, some cleanup
+TODO: entity forces, controls handling, some cleanup

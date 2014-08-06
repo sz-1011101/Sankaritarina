@@ -2,28 +2,44 @@
 #include <vector>
 
 #include "Entity.h"
-#include "Tree.h"
 #include "Map.h"
 #include "World.h"
 
 
 class EntityZone;
+class Tree;
+class Animal;
 
 class EntityControl
 {
 public:
 
 	const int  MAX_ENTITIES = 512;
-	const int MAX_TREES = MAX_ENTITIES/8;
+	const int MAX_TREES = MAX_ENTITIES / 8;
+	const int MAX_ANIMALS = MAX_ENTITIES / 4;
 	const int ZONE_WIDTH = 30;
 	const bool ENTITY_DEBUGGING_ACTIVE = true;
+
 	EntityControl(Map* map, Graphics* graphics, World* world);
 	~EntityControl();
+
 	Tree* spawnTree(int tileX, int tileY, bool seeded);
+	Animal* spawnAnimal(int tileX, int tileY, bool born);
+
 	void populateMap(Map* map);
 	void entityInteraction(int framerate);
 
 private:
+
+	const int TREE_FRAME_WIDTH = 64;
+	const int TREE_FRAME_HEIGHT = 64;
+	const int TREE_FRAMECOUNT = 8;
+	const int TREE_WEIGHT = 1000;
+
+	const int CHICKEN_FRAME_WIDTH = 8;
+	const int CHICKEN_FRAME_HEIGHT = 16;
+	const int CHICKEN_FRAMECOUNT = 10;
+	const int CHICKEN_WEIGHT = 1;
 
 
 	std::vector<Entity*> entities;
@@ -31,15 +47,12 @@ private:
 	Map* map;
 	World* world;
 	Graphics* graphics;
-	const int TREE_FRAME_WIDTH = 64;
-	const int TREE_FRAME_HEIGHT = 64;
-	const int TREE_FRAMECOUNT = 8;
 	int amountZones;
 	int idCounter;
 
 	bool addNewEntity(Entity* entity);
-	void collisionsMap(Entity* entity);
 	void vegetationHandling();
+	void animalsHandling();
 	void updateZone(Entity* entity);
 	void renderDebugText(Entity* entity);
 

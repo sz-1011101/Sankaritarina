@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Graphics.h"
 #include "Text.h"
+#include "EntityZone.h"
 
 /* Entity Cnstructor
 	int x Postion x
@@ -14,7 +15,7 @@
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
 	*/
-Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, int id) : Renderable(x, y, graphics)
+Entity::Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, int id) : Renderable(x, y, graphics)
 {
 	this->texture = texture;
 	currentFrame = 0;
@@ -25,6 +26,7 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FR
 	this->id = id;
 	currentEntityZone = NULL;
 	debugText = new Text("Entity", x, y, 255, 255, 255, NULL, graphics, true);
+	forces = { 0, 0, weight };
 }
 
 //Destructor
@@ -84,13 +86,27 @@ Text* Entity::getDebugText()
 }
 
 //Updates the debug text
+//Updates the debug text for this animal
 void Entity::updateDebugText()
 {
-
+	std::stringstream debugStream;
+	debugStream.str("");
+	if (currentEntityZone != NULL)
+	{
+		debugStream << "id:" << id << " " << entityName << "\n" << "Zone: " << currentEntityZone->getZoneNumber();
+		debugText->updateText(debugStream.str()); //Update the text
+		debugText->setTextPos(x, y-50); //Update the position to the trees position
+	}
 }
 
 //returns the id of this entity
 int Entity::getId()
 {
 	return id;
+}
+
+//Update forces like gravity
+void Entity::updateForces()
+{
+	
 }

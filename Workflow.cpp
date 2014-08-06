@@ -19,6 +19,7 @@
 #include "World.h"
 #include "EntityControl.h"
 #include "Tree.h"
+#include "Animal.h"
 
 //some testing is done here
 int main(int argc, char* args[])
@@ -47,6 +48,7 @@ int main(int argc, char* args[])
 	//Init some textures
 	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
 	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
+	graphics->initTexture("images/entities/animals/chicken_8x16.png", TexturesEnumeration::TEXTURE_CHICKEN);
 	graphics->initFont("fonts/Munro.ttf", 9); //Init font
 
 	Timer* fpsTimer = new Timer();

@@ -8,6 +8,7 @@ namespace TexturesEnumeration
 		TEXTURE_EMPTY=0,
 		TEXTURE_EARTH,
 		TEXTURE_TREE,
+		TEXTURE_CHICKEN,
 		TEXTURES_COUNT
 	};
 };
