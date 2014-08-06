@@ -13,8 +13,8 @@ class EntityControl
 {
 public:
 
-	const int  MAX_ENTITIES = 2048;
-	const int MAX_TREES = MAX_ENTITIES;
+	const int  MAX_ENTITIES = 512;
+	const int MAX_TREES = MAX_ENTITIES/8;
 	const int ZONE_WIDTH = 30;
 	const bool ENTITY_DEBUGGING_ACTIVE = true;
 	EntityControl(Map* map, Graphics* graphics, World* world);
@@ -40,8 +40,8 @@ private:
 	bool addNewEntity(Entity* entity);
 	void collisionsMap(Entity* entity);
 	void vegetationHandling();
-	void entityZonesHandling();
-	void entityDebugTextHandling();
+	void updateZone(Entity* entity);
+	void renderDebugText(Entity* entity);
 
 };
 

@@ -4,6 +4,7 @@
 EntityZone::EntityZone()
 {
 	this->zoneNumber = -1;
+	entities.reserve(128);
 }
 
 //Destrcutor

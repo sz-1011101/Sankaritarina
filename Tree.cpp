@@ -119,11 +119,18 @@ void Tree::growTree(int framerate, double rate)
 	growth = growth + (rate*Functions::calculateFrameFactor(framerate));
 }
 
+
 //Process Tree
 void Tree::proceed(int framerate)
 {
 	growTree(framerate, 1);
-	updateDebugText();
+	//Only update text if something relevant was changed befor
+	if (entityChanged)
+	{
+		updateDebugText();
+		entityChanged = false;
+	}
+	
 }
 
 //Returns if this tree is dead and therefor is obsolete

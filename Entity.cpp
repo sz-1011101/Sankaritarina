@@ -30,7 +30,6 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, int const* FR
 //Destructor
 Entity::~Entity()
 {
-	printf("Deallocating text object");
 	delete debugText;
 }
 
@@ -74,6 +73,7 @@ EntityZone* Entity::getCurrentEntityZone()
 //Sets the current zone for this entity
 void Entity::setCurrentEntityZone(EntityZone* entityZone)
 {
+	entityChanged = true; //Entity changed
 	currentEntityZone = entityZone;
 }
 

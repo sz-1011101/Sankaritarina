@@ -34,5 +34,6 @@ v0.001:
 -Multiline textrendering added
 
 -Debugging output, some zone handling
+-Fixed major performance hog caused by debug string updating
 
-TODO: Zone performance improvements, controls handling, some cleanup
+TODO: controls handling, some cleanup

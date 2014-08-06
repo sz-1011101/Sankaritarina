@@ -38,6 +38,7 @@ protected:
 	EntityZone* currentEntityZone;
 	std::string entityName;
 	int id;
+	bool entityChanged;
 	virtual void updateDebugText();
 
 };
