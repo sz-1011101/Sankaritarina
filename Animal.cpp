@@ -5,7 +5,7 @@
 
 
 //Animal constructor
-Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool unborn, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world, id)
+Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, bool unborn, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
 {
 	using namespace AnimalEnumeration;
 
@@ -83,6 +83,7 @@ void Animal::proceed(int framerate)
 		updateDebugText();
 		entityChanged = false;
 	}
+	updateDebugTextPosition();
 
 }
 
@@ -129,6 +130,9 @@ void Animal::growAnimal(int framerate, double rate)
 			case ANIMAL_FULL_SIZE_2:
 			case ANIMAL_FULL_SIZE_3:
 				animalState = ANIMAL_DEAD;
+				break;
+			case ANIMAL_DEAD:
+				animalState = ANIMAL_DISAPPEARED;
 				break;
 			default:
 				break;

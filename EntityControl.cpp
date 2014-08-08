@@ -97,6 +97,8 @@ void EntityControl::entityInteraction(int framerate)
 		else
 		{
 			//----------------Entity does stuff--------------------------------//
+			currentEntity->updateForces(framerate);
+			currentEntity->handleCollisions(framerate, map);
 			currentEntity->proceed(framerate);
 
 			updateZone(currentEntity);
@@ -115,10 +117,10 @@ void EntityControl::entityInteraction(int framerate)
 //TODO optimize and make more simple
 Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
-	int xPos = tileX*(map->MAP_TILE_WIDTH_HEIGHT) - 24;
-	int yPos = ((map->getMapHeight() - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 56;
-	Tree* spawnedTree = new Tree(xPos, yPos, TREE_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, world, seeded, ++idCounter);
-	
+	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
+	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT - TREE_FRAME_HEIGHT;
+	Tree* spawnedTree = new Tree(xPos, yPos, TREE_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, &TREE_FRAME_CENTER_OFFSET, world, seeded, ++idCounter);
+
 	//return if successful
 	if (addNewEntity(spawnedTree))
 	{
@@ -134,10 +136,10 @@ Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 //Spawns a animal, returns pointer if successful, NULL otherwise
 Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 {
-	int xPos = tileX*(map->MAP_TILE_WIDTH_HEIGHT) - 24;
-	int yPos = ((map->getMapHeight() - 1) - tileY)*map->MAP_TILE_WIDTH_HEIGHT - 56;
-	Animal* spawnedAnimal = new Animal(xPos, yPos, CHICKEN_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), &CHICKEN_FRAMECOUNT, &CHICKEN_FRAME_WIDTH, &CHICKEN_FRAME_HEIGHT, world, born, ++idCounter);
-	
+	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
+	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT - CHICKEN_FRAME_HEIGHT;
+	Animal* spawnedAnimal = new Animal(xPos, yPos, CHICKEN_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), &CHICKEN_FRAMECOUNT, &CHICKEN_FRAME_WIDTH, &CHICKEN_FRAME_HEIGHT, &CHICKEN_FRAME_CENTER_OFFSET, world, born, ++idCounter);
+
 	//return if successful
 	if (addNewEntity(spawnedAnimal))
 	{
@@ -157,7 +159,7 @@ void EntityControl::vegetationHandling()
 	if (entities.size() < MAX_ENTITIES)
 	{
 		int randomTreePosX = Functions::generateRandomNumber(0, map->getMapWidth() - 1);
-		spawnTree(randomTreePosX, map->getHeightSegment(randomTreePosX), true);
+		spawnTree(randomTreePosX, map->getGraphicalHeightSegmentTile(randomTreePosX), true);
 	}
 }
 
@@ -167,7 +169,7 @@ void EntityControl::animalsHandling()
 	if (entities.size() < MAX_ENTITIES)
 	{
 		int randomAnimalPosX = Functions::generateRandomNumber(0, map->getMapWidth() - 1);
-		spawnAnimal(randomAnimalPosX, map->getHeightSegment(randomAnimalPosX), true);
+		spawnAnimal(randomAnimalPosX, map->getGraphicalHeightSegmentTile(randomAnimalPosX), true);
 	}
 }
 
@@ -179,7 +181,7 @@ void EntityControl::updateZone(Entity* entity)
 	int zone = (entity->getX() / map->MAP_TILE_WIDTH_HEIGHT) / ZONE_WIDTH;
 	EntityZone* oldEntityZone = entity->getCurrentEntityZone();
 	EntityZone* newEntityZone = &entityZones[zone];
-	
+
 	//Check if the zones have changed, and correct if needed
 	if (oldEntityZone != NULL)
 	{
@@ -191,7 +193,7 @@ void EntityControl::updateZone(Entity* entity)
 			oldEntityZone->removeEntityFromZone(entity->getId());
 			printf("Reset zone for an entity\n");
 		}
-		
+
 	}
 	else //Otherwise set the zone for the first time
 	{

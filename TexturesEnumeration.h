@@ -9,6 +9,7 @@ namespace TexturesEnumeration
 		TEXTURE_EARTH,
 		TEXTURE_TREE,
 		TEXTURE_CHICKEN,
+		TEXTURE_GRASS_1,
 		TEXTURES_COUNT
 	};
 };

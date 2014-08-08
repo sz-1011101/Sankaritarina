@@ -37,4 +37,6 @@ v0.001:
 -Fixed major performance hog caused by debug string updating
 -Added basic animal class
 
-TODO: entity forces, controls handling, some cleanup
+-Added forces and basic collisions (y dir), grass rendering, some fixes
+
+TODO: basic ai, controls handling, some cleanup

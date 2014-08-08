@@ -9,7 +9,7 @@ class Text :
 {
 public:
 
-	Text(std::string displayedText, int x, int y, int weight, int r, int g, int b, TTF_Font* font, Graphics* graphics, bool useCamera);
+	Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Font* font, Graphics* graphics, bool useCamera);
 	~Text();
 	virtual void render();
 	void updateText(std::string newText);

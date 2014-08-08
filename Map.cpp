@@ -52,7 +52,7 @@ Map::~Map()
 	delete[] map;
 }
 
-//Retrieves the value of an map tile attribute, returns -1 if invalid value
+//Retrieves the value of an map tile attribute, returns -1 if invalid values given
 int Map::getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr)
 {
 	//check if valid position
@@ -104,9 +104,21 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, 
 		for (int j = mapHeight - 1; j >= 0; j--)
 		{
 			//Place earth until upper limit reached (note that the y axis is "inverse")
-			if (j > (mapHeight - 1) - groundHeight)
+			if (j > (mapHeight)-groundHeight)
 			{
 				map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_EARTH;
+			}
+			else if (mapHeight - groundHeight == j)
+			{
+				//Grass tile with a probability of 50%
+				if (Functions::generateRandomNumber(1, 100) <= 50)
+				{
+					map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_GRASS;
+				}
+				else
+				{
+					map[i][j][MapEnumeration::MAP_TILE_ATR_TYPE] = MapEnumeration::MAP_TILE_TYPE_EARTH;
+				}
 			}
 			else
 			{
@@ -114,20 +126,32 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, 
 			}
 		}
 		//Plant a tree with a random chance
-		if (!entityPut && Functions::generateRandomNumber(0, 100) < treeRate)
+		if (!entityPut && Functions::generateRandomNumber(1, 100) < treeRate)
 		{
 			//spawn with a little offset to the left and up, also the earth should be flat around a tree
-			entityControl->spawnTree(i, groundHeight, false);
+			entityControl->spawnTree(i, getGraphicalHeightSegmentTile(i), false);
 			entityPut = true;
 		}
 
 	}
 }
 
-
+//Returns the height of the given segment of the map
 int Map::getHeightSegment(int x)
 {
 	return segHeight[x];
+}
+
+//Returns the height for graphical use
+int Map::getGraphicalHeightSegment(int x)
+{
+	return (mapHeight- segHeight[x])*MAP_TILE_WIDTH_HEIGHT;
+}
+
+//Returns the y position of the ground tile
+int Map::getGraphicalHeightSegmentTile(int x)
+{
+	return (mapHeight - segHeight[x]);
 }
 
 //Render the map via graphics
@@ -165,7 +189,9 @@ void Map::render()
 		lastIndexY = mapHeight - 1;
 	}
 
-	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
+	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY; //Main texture to draw
+	TexturesEnumeration::TEXTURES_NAME textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY; //Texture to draw adjacent to the main tile
+	int textureToDrawAdditionalOffset = 0;
 
 	//render everything
 	for (int i = firstIndexX; i < lastIndexX; i++)
@@ -176,33 +202,53 @@ void Map::render()
 			{
 			case MapEnumeration::MAP_TILE_TYPE_EMTPY:
 				textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
+				textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY;
 				break;
 			case MapEnumeration::MAP_TILE_TYPE_EARTH:
 				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
+				textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY;
+				break;
+			case MapEnumeration::MAP_TILE_TYPE_GRASS:
+				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
+				textureToDrawAdditional = TexturesEnumeration::TEXTURE_GRASS_1;
+				textureToDrawAdditionalOffset = 2;
 				break;
 			}
+
 			//color mod by worlds lighting for the surface tile
 			if (mapHeight - j == segHeight[i])
 			{
 
 				graphics->setTextureColorMod(textureToDraw, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+				graphics->setTextureColorMod(textureToDrawAdditional, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 			}
 			else
 			{
 				graphics->setTextureColorMod(textureToDraw, 255, 255, 255);
+				graphics->setTextureColorMod(textureToDrawAdditional, 255, 255, 255);
 			}
+
 			graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
+			graphics->drawTexture(textureToDrawAdditional, i * MAP_TILE_WIDTH_HEIGHT, (j - textureToDrawAdditionalOffset) * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
 
 		}
 	}
 }
 
+//Returns the maps width
 int Map::getMapWidth()
 {
 	return mapWidth;
 }
 
+//Returns the maps height
 int Map::getMapHeight()
 {
 	return mapHeight;
+}
+
+//Returns the tile that corresponds to the given position
+int Map::getTileXFromPosition(int x)
+{
+	return x / MAP_TILE_WIDTH_HEIGHT;
 }

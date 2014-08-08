@@ -8,7 +8,7 @@
 
 
 //Tree constructor, calling superclass
-Tree::Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, world, id)
+Tree::Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const*  FRAME_CENTER_OFFSET, World* world, bool seeded, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
 {
 	using namespace TreeEnumeration;
 	//Spawn as a tiny seed or at a random size
@@ -133,6 +133,7 @@ void Tree::proceed(int framerate)
 		updateDebugText();
 		entityChanged = false;
 	}
+	updateDebugTextPosition();
 
 }
 

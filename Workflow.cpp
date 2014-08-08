@@ -48,7 +48,8 @@ int main(int argc, char* args[])
 	//Init some textures
 	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
 	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
-	graphics->initTexture("images/entities/animals/chicken_8x16.png", TexturesEnumeration::TEXTURE_CHICKEN);
+	graphics->initTexture("images/entities/animals/chicken_16x8.png", TexturesEnumeration::TEXTURE_CHICKEN);
+	graphics->initTexture("images/tiles/8x16/Gras1tile8x16.png", TexturesEnumeration::TEXTURE_GRASS_1);
 	graphics->initFont("fonts/Munro.ttf", 9); //Init font
 
 	Timer* fpsTimer = new Timer();

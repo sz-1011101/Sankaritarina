@@ -150,7 +150,7 @@ TTF_Font*  Graphics::getFont()
 void Graphics::graphicsRender()
 {
 	std::vector<Renderable*>::iterator renderableIterator;
-	
+
 	for (renderableIterator = toRender->getRenderVector()->begin(); renderableIterator != toRender->getRenderVector()->end(); renderableIterator++)
 	{
 		(*renderableIterator)->render();
@@ -168,7 +168,7 @@ bool Graphics::drawTexture(Texture* texture, int x, int y, int w, int h, bool us
 	{
 		int mWidth = texture->getTextureWidth();
 		int mHeight = texture->getTextureHeight();
-		
+
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -195,7 +195,7 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 	{
 		int mWidth = gTextures[texture]->getTextureWidth();
 		int mHeight = gTextures[texture]->getTextureHeight();
-		
+
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -245,7 +245,7 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 {
 	if (texture != NULL)
 	{
-		
+
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
@@ -278,7 +278,7 @@ bool Graphics::drawRenderable(Renderable* renderable, bool useCamera)
 		{
 			toRender->addRenderable(renderable);
 			return true;
-		}	
+		}
 	}
 
 	return false;
@@ -287,9 +287,9 @@ bool Graphics::drawRenderable(Renderable* renderable, bool useCamera)
 //Checks if the renderable object is visible to the Camera
 bool Graphics::checkRenderableVisible(Renderable* renderable)
 {
-	if (renderable->getX() >= gCamera->getCameraX() && renderable->getX() < gCamera->getCameraX() + *SCREEN_WIDTH)
+	if (renderable->getX() >= gCamera->getCameraX() - 128 && renderable->getX() < gCamera->getCameraX() + *SCREEN_WIDTH + 128)
 	{
-		if (renderable->getY() >= gCamera->getCameraY() && renderable->getY() < gCamera->getCameraY() + *SCREEN_HEIGHT)
+		if (renderable->getY() >= gCamera->getCameraY() - 128 && renderable->getY() < gCamera->getCameraY() + *SCREEN_HEIGHT + 128)
 		{
 			return true;
 		}

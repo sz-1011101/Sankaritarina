@@ -18,9 +18,13 @@ public:
 
 	int getTileAttribute(int x, int y, MapEnumeration::MAP_TILE_ATTRIBUTE attr);
 	void generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, EntityControl* entityControl);
-	int getHeightSegment(int x);
 	int getMapWidth();
 	int getMapHeight();
+	int getTileXFromPosition(int x);
+	int getHeightSegment(int x);
+	int getGraphicalHeightSegment(int x);
+	int getGraphicalHeightSegmentTile(int x);
+
 	virtual void render();
 
 private:

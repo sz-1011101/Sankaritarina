@@ -14,7 +14,7 @@ class EntityControl
 {
 public:
 
-	const int  MAX_ENTITIES = 512;
+	const int  MAX_ENTITIES = 128;
 	const int MAX_TREES = MAX_ENTITIES / 8;
 	const int MAX_ANIMALS = MAX_ENTITIES / 4;
 	const int ZONE_WIDTH = 30;
@@ -35,12 +35,13 @@ private:
 	const int TREE_FRAME_HEIGHT = 64;
 	const int TREE_FRAMECOUNT = 8;
 	const int TREE_WEIGHT = 1000;
+	const int TREE_FRAME_CENTER_OFFSET = 20;
 
-	const int CHICKEN_FRAME_WIDTH = 8;
-	const int CHICKEN_FRAME_HEIGHT = 16;
+	const int CHICKEN_FRAME_WIDTH = 16;
+	const int CHICKEN_FRAME_HEIGHT = 8;
 	const int CHICKEN_FRAMECOUNT = 10;
 	const int CHICKEN_WEIGHT = 1;
-
+	const int CHICKEN_FRAME_CENTER_OFFSET = 5;
 
 	std::vector<Entity*> entities;
 	EntityZone* entityZones;

@@ -9,7 +9,7 @@ class Tree :
 {
 public:
 
-	Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, World* world, bool seeded, int id);
+	Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, bool seeded, int id);
 	~Tree();
 	virtual void render();
 	virtual void calcFrame(int framerate);
