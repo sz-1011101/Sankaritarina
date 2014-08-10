@@ -7,6 +7,7 @@
 #include "EntityZone.h"
 #include "Map.h"
 #include "Functions.h"
+#include "Action.h"
 
 /* Entity Cnstructor
 	int x Postion x
@@ -17,6 +18,7 @@
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
 	*/
+
 Entity::Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, int id) : Renderable(x, y, graphics)
 {
 	this->texture = texture;
@@ -30,6 +32,9 @@ Entity::Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, i
 	currentEntityZone = NULL;
 	debugText = new Text("Entity", x, y - 100, 255, 255, 255, NULL, graphics, true);
 	forces = { 0, 0, weight };
+	controller = NULL;
+	heading = EntityEnumeration::RIGHT;
+
 }
 
 //Destructor
@@ -47,7 +52,7 @@ void Entity::render()
 		currentFrame = 0;
 	}
 
-	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+	graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
 	currentFrame++;
 }
 
@@ -94,17 +99,18 @@ void Entity::updateDebugText()
 {
 	std::stringstream debugStream;
 	debugStream.str("");
+
 	if (currentEntityZone != NULL)
 	{
 		debugStream << "id:" << id << " " << entityName << "\n" << "Zone: " << currentEntityZone->getZoneNumber();
 		debugText->updateText(debugStream.str()); //Update the text
-		debugText->setTextPos(x, y - 50); //Update the position to the trees position
+		debugText->setTextPos((int)x, (int)y - 50); //Update the position to the trees position
 	}
 }
 
 void Entity::updateDebugTextPosition()
 {
-	debugText->setTextPos(x, y - 100);
+	debugText->setTextPos((int)x, (int)y - 100);
 }
 
 //returns the id of this entity
@@ -114,29 +120,115 @@ int Entity::getId()
 }
 
 //Update forces like gravity
-//TODO x forces
 void Entity::updateForces(int framerate)
 {
+	const double FORCES_FALLDOWN = 0.1;
+	const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
+	const double FORCE_DELTA = FORCES_FALLDOWN*FRAME_FACTOR;
 
+	const double GRAVITY = 0.5;
+
+	//if entity is in the sky, apply gravity, otherwise stop entity from falling through
+
+	if (forces.y < MAX_ACCELARATION_Y)
+	{
+		forces.y = forces.y + GRAVITY*FRAME_FACTOR;
+	}
+
+	//Update x forces
+	if (forces.x > 0)
+	{
+		forces.x = forces.x - FORCE_DELTA;
+	}
+	else if (forces.x < 0)
+	{
+		forces.x = forces.x + FORCE_DELTA;
+	}
+
+	//Update y forces
+	if (forces.y > 0)
+	{
+		forces.y = forces.y - FORCE_DELTA;
+	}
+	else if (forces.y < 0)
+	{
+		forces.y = forces.y + FORCE_DELTA;
+	}
+
+	//Catch jittering
+	if (forces.y <= FORCE_DELTA && forces.y >= (-1)*FORCE_DELTA)
+	{
+		forces.y = 0;
+	}
+	if (forces.x <= FORCE_DELTA && forces.x >= (-1)*FORCE_DELTA)
+	{
+		forces.x = 0;
+	}
+
+	//Update positions by forces
+	x = x + forces.x;
 	y = y + forces.y;
 
 }
 
+//Lets entities move until they hit the ground, automatically adds gravity
 void Entity::handleCollisions(int framerate, Map* map)
 {
-	const int MAP_GROUND_HEIGHT = map->getGraphicalHeightSegment(map->getTileXFromPosition(x + *FRAME_CENTER_OFFSET));
+	const int MAP_GROUND_HEIGHT = map->getGraphicalHeightSegment(map->getTileXFromPosition((int)x + *FRAME_CENTER_OFFSET));
 
-	//if entity is in the sky, apply gravity, otherwise stop entity from falling through
-	if (MAP_GROUND_HEIGHT > y + *FRAME_HEIGHT)
-	{
-		if (forces.y < MAX_ACCELARATION_Y)
-		{
-			forces.y = forces.y + 0.1*Functions::calculateFrameFactor(framerate);
-		}
-	}
-	else
+	if (MAP_GROUND_HEIGHT <= y + *FRAME_HEIGHT)
 	{
 		y = MAP_GROUND_HEIGHT - *FRAME_HEIGHT;
 		forces.y = 0;
 	}
+	//Map border collision
+	if (x <= 0)
+	{
+		x = 0;
+	}
+	else if (x >= map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - *FRAME_WIDTH)
+	{
+		x = map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - *FRAME_WIDTH;
+	}
+}
+
+//Sets the current Action of this entity
+void Entity::setAction(Action* action)
+{
+	this->action = action;
+}
+
+//Returns the current action
+Action* Entity::getAction()
+{
+	return action;
+}
+
+//Move the the entity in the direction provided
+void Entity::push(double x, double y, int framerate)
+{
+	const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
+
+	forces.x = forces.x + x*FRAME_FACTOR;
+	forces.y = forces.y + y*FRAME_FACTOR;
+}
+
+//action processing
+void Entity::handleAction(int framerate)
+{
+	if (action != NULL)
+	{
+		action->process(framerate);
+		if (action->isActionDone())
+		{
+			delete action;
+			action = NULL;
+		}
+	}
+}
+
+//Set the heading of this entity
+void Entity::setHeading(EntityEnumeration::ENTITY_HEADING heading)
+{
+	this->heading = heading;
 }

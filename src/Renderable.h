@@ -17,8 +17,8 @@ public:
 protected:
 
 	Graphics* graphics;
-	int x;
-	int y;
+	double x;
+	double y;
 
 };
 

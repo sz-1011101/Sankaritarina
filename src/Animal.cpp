@@ -2,10 +2,11 @@
 #include "Animal.h"
 #include "Text.h"
 #include "EntityZone.h"
-
+#include "Action.h"
+#include "AnimalController.h"
 
 //Animal constructor
-Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, bool unborn, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
+Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, Map* map, bool unborn, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
 {
 	using namespace AnimalEnumeration;
 
@@ -23,11 +24,25 @@ Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, i
 	growth = Functions::generateRandomNumber(0, 50);
 	maxGrothFullSize = ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
 	entityName = "Animal";
+	animalActionState = AnimalEnumeration::ANIMAL_ACTION_IDLE;
+
+	controller = new AnimalController(this, map); //The controller object for this entity, handles all ai interaction
+
 }
 
 //Animal destructor
 Animal::~Animal()
 {
+	//Deallocate action
+	if (action!=NULL)
+	{
+		delete action;
+		action = NULL;
+	}
+	
+	//dealloc controller object
+	delete controller;
+	
 }
 
 //Renders the animal according to the state
@@ -37,7 +52,7 @@ void Animal::render()
 	//color mod by worlds lighting
 	graphics->setTextureColorMod(texture, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	//draw frame of the tree
-	graphics->drawFrameTexture(texture, x, y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+	graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
 
 }
 
@@ -83,6 +98,11 @@ void Animal::proceed(int framerate)
 		updateDebugText();
 		entityChanged = false;
 	}
+	//Controller decides an action
+	controller->decideAction(framerate);
+	//Do action
+	handleAction(framerate);
+
 	updateDebugTextPosition();
 
 }
@@ -156,4 +176,16 @@ bool Animal::flaggedForRemoval()
 	{
 		return false;
 	}
+}
+
+//Return the animals action state it currently is in
+AnimalEnumeration::ANIMAL_ACTION_STATE Animal::getActionStatus()
+{
+	return animalActionState;
+}
+
+//set the animals action status
+void Animal::setActionStatus(AnimalEnumeration::ANIMAL_ACTION_STATE actionState)
+{
+	animalActionState = actionState;
 }

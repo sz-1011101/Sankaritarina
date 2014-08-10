@@ -12,6 +12,7 @@ public:
 	int getCameraX();
 	int getCameraY();
 	bool setCameraPos(int x, int y);
+
 private:
 
 	int x;

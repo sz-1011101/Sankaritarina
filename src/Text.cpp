@@ -99,7 +99,7 @@ void Text::updateText(std::string newText)
 //Renders the text object
 void Text::render()
 {
-	graphics->drawSDLTexture(texture, x, y, textWidth, textHeight, useCamera); //Draw the Texture directly
+	graphics->drawSDLTexture(texture, (int)x, (int)y, textWidth, textHeight, useCamera); //Draw the Texture directly
 }
 
 //Set this text objects position

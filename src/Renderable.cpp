@@ -27,11 +27,11 @@ void Renderable::render()
 //Returns the x pos
 int Renderable::getX()
 {
-	return x;
+	return (int)x;
 }
 
 //Returns the y pos
 int Renderable::getY()
 {
-	return y;
+	return (int)y;
 }

@@ -23,7 +23,7 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 	idCounter = 0;
 	//Initialize entity zones
 
-	amountZones = ceil(map->getMapWidth() / 30.0); //The map gets partitioned in zones of 30 tiles
+	amountZones = ceil(((double)map->getMapWidth()) / 30.0); //The map gets partitioned in zones of 30 tiles
 
 	entityZones = new EntityZone[amountZones];
 
@@ -138,7 +138,7 @@ Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
 	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT - CHICKEN_FRAME_HEIGHT;
-	Animal* spawnedAnimal = new Animal(xPos, yPos, CHICKEN_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), &CHICKEN_FRAMECOUNT, &CHICKEN_FRAME_WIDTH, &CHICKEN_FRAME_HEIGHT, &CHICKEN_FRAME_CENTER_OFFSET, world, born, ++idCounter);
+	Animal* spawnedAnimal = new Animal(xPos, yPos, CHICKEN_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), &CHICKEN_FRAMECOUNT, &CHICKEN_FRAME_WIDTH, &CHICKEN_FRAME_HEIGHT, &CHICKEN_FRAME_CENTER_OFFSET, world, map, born, ++idCounter);
 
 	//return if successful
 	if (addNewEntity(spawnedAnimal))
@@ -156,7 +156,7 @@ Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 //Handles vegetation growth/spawning
 void EntityControl::vegetationHandling()
 {
-	if (entities.size() < MAX_ENTITIES)
+	if ((int)entities.size() < MAX_ENTITIES)
 	{
 		int randomTreePosX = Functions::generateRandomNumber(0, map->getMapWidth() - 1);
 		spawnTree(randomTreePosX, map->getGraphicalHeightSegmentTile(randomTreePosX), true);

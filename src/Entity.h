@@ -4,16 +4,22 @@
 #include "Renderable.h"
 #include "World.h"
 #include "EntityStruct.h"
+#include "EntityEnumeration.h"
 
 class Texture;
 class EntityZone;
 class Text;
 class Map;
+class Action;
+class Controller;
+
 
 class Entity : 
 	public Renderable
 {
 public:
+
+	const int MAX_ACCELARATION_Y = 5;
 
 	Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, int id);
 	~Entity();
@@ -29,28 +35,35 @@ public:
 	Text* getDebugText();
 	void updateForces(int framerate);
 	void handleCollisions(int framerate, Map* map);
+	void setAction(Action* action);
+	Action* getAction();
+	void push(double x, double y, int framerate);
 
-	const int MAX_ACCELARATION_Y = 5;
+	void setHeading(EntityEnumeration::ENTITY_HEADING);
+
 
 protected:
+
+	int const* FRAME_COUNT;
+	int const* FRAME_WIDTH;
+	int const* FRAME_HEIGHT;
+	int const* FRAME_CENTER_OFFSET;
 
 	Texture* texture;
 	int currentFrame;
 	World* world;
 	Text* debugText;
-	int const* FRAME_COUNT;
-	int const* FRAME_WIDTH;
-	int const* FRAME_HEIGHT;
-	int const* FRAME_CENTER_OFFSET;
+	Action* action;
+	Controller* controller;
 	EntityZone* currentEntityZone;
 	std::string entityName;
 	int id;
 	EntityStruct::entityForces forces;
 	bool entityChanged;
+	EntityEnumeration::ENTITY_HEADING heading;
 
 	void updateDebugTextPosition();
 	void updateDebugText();
-	
-
+	void handleAction(int framerate);
 };
 

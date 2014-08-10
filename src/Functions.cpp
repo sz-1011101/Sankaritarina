@@ -33,3 +33,16 @@ double Functions::calculateFrameFactor(int framerate)
 		return 0.0;
 	}
 }
+
+//Returns true with the given percentage (0-100)
+bool Functions::calculateRandomBoolean(int percentageTrue)
+{
+	if (generateRandomNumber(1, 100) < percentageTrue)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
