@@ -268,7 +268,47 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 	return false;
 }
 
+//Renders a texture from the gTexture array which is clipped in Frames and can be flipped
+bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera, bool flippedHorizontal)
+{
 
+	if (texture != NULL)
+	{
+
+		SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+		//determine heading
+		switch (flippedHorizontal)
+		{
+		case true:
+			flip = SDL_FLIP_HORIZONTAL;
+			break;
+		default:
+			break;
+		}
+
+		//Cube with the position, width and height
+		SDL_Rect rSquare;
+
+		//Add camera offset if wanted
+		if (useCamera)
+		{
+			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), *FRAME_WIDTH, *FRAME_HEIGHT };
+		}
+		else
+		{
+			rSquare = { x, y, *FRAME_WIDTH, *FRAME_HEIGHT };
+		}
+
+		SDL_Rect rClip = { (currentFrame*(*FRAME_WIDTH)), 0, *FRAME_WIDTH, *FRAME_HEIGHT }; //Get the frame position and clip it
+
+		SDL_RenderCopyEx(gRenderer, texture->getTexture(), &rClip, &rSquare, 0, NULL, flip);
+
+		return true;
+	}
+
+	return false;
+}
 
 //Adds the Renderable object to the RenderList, to draw with graphicsRender()
 bool Graphics::drawRenderable(Renderable* renderable, bool useCamera)

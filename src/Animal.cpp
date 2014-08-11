@@ -37,7 +37,16 @@ void Animal::render()
 	//color mod by worlds lighting
 	graphics->setTextureColorMod(texture, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	//draw frame of the tree
-	graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+
+	if (heading == EntityEnumeration::LEFT)
+	{
+		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true, true);
+	}
+	else
+	{
+		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+	}
+	
 
 }
 
