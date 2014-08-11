@@ -13,7 +13,7 @@ public:
 
 	const double MAX_MOVEMENT_ONE_STEP = 3;
 
-	Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, Map* map, bool unborn, int id);
+	Animal(int x, int y, Graphics* graphics, Texture* texture, World* world, Map* map, bool unborn, int id);
 	~Animal();
 	virtual void render();
 	virtual void calcFrame(int framerate);
@@ -21,9 +21,10 @@ public:
 	virtual void proceed(int framerate);
 	virtual bool flaggedForRemoval();
 	AnimalEnumeration::ANIMAL_ACTION_STATE getActionStatus();
+	AnimalEnumeration::ANIMAL_STATE getAnimalState();
 	void setActionStatus(AnimalEnumeration::ANIMAL_ACTION_STATE actionState);
 
-private:
+protected:
 
 	
 

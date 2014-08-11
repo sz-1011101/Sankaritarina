@@ -19,19 +19,15 @@
 	FRAME_HEIGHT frame height
 	*/
 
-Entity::Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, int id) : Renderable(x, y, graphics)
+Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, World* world, int id) : Renderable(x, y, graphics)
 {
 	this->texture = texture;
 	currentFrame = 0;
-	this->FRAME_COUNT = FRAME_COUNT;
-	this->FRAME_WIDTH = FRAME_WIDTH;
-	this->FRAME_HEIGHT = FRAME_HEIGHT;
-	this->FRAME_CENTER_OFFSET = FRAME_CENTER_OFFSET;
 	this->world = world;
 	this->id = id;
 	currentEntityZone = NULL;
 	debugText = new Text("Entity", x, y - 100, 255, 255, 255, NULL, graphics, true);
-	forces = { 0, 0, weight };
+	forces = { 0, 0, 1 };
 	controller = NULL;
 	heading = EntityEnumeration::RIGHT;
 

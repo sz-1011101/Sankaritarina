@@ -10,8 +10,8 @@
 #include "EntityControl.h"
 #include "EntityZone.h"
 #include "Text.h"
-#include "Tree.h"
-#include "Animal.h"
+#include "Appletree.h"
+#include "Chicken.h"
 
 //Constructor
 EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
@@ -118,8 +118,8 @@ void EntityControl::entityInteraction(int framerate)
 Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
-	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT - TREE_FRAME_HEIGHT;
-	Tree* spawnedTree = new Tree(xPos, yPos, TREE_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), &TREE_FRAMECOUNT, &TREE_FRAME_WIDTH, &TREE_FRAME_HEIGHT, &TREE_FRAME_CENTER_OFFSET, world, seeded, ++idCounter);
+	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT;
+	Tree* spawnedTree = new Appletree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), world, seeded, ++idCounter);
 
 	//return if successful
 	if (addNewEntity(spawnedTree))
@@ -137,8 +137,8 @@ Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
-	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT - CHICKEN_FRAME_HEIGHT;
-	Animal* spawnedAnimal = new Animal(xPos, yPos, CHICKEN_WEIGHT, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), &CHICKEN_FRAMECOUNT, &CHICKEN_FRAME_WIDTH, &CHICKEN_FRAME_HEIGHT, &CHICKEN_FRAME_CENTER_OFFSET, world, map, born, ++idCounter);
+	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT;
+	Animal* spawnedAnimal = new Chicken(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), world, map, born, ++idCounter);
 
 	//return if successful
 	if (addNewEntity(spawnedAnimal))

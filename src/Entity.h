@@ -21,7 +21,7 @@ public:
 
 	const int MAX_ACCELARATION_Y = 5;
 
-	Entity(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, int id);
+	Entity(int x, int y, Graphics* graphics, Texture* texture, World* world, int id);
 	~Entity();
 	virtual void render();
 	virtual void calcFrame(int framerate);

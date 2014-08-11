@@ -6,28 +6,13 @@
 #include "AnimalController.h"
 
 //Animal constructor
-Animal::Animal(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, Map* map, bool unborn, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
+Animal::Animal(int x, int y, Graphics* graphics, Texture* texture, World* world, Map* map, bool unborn, int id) : Entity(x, y, graphics, texture, world, id)
 {
-	using namespace AnimalEnumeration;
 
-	//Spawn as unborn or a random state
-	if (unborn)
-	{
-		animalState = ANIMAL_UNBORN;
-	}
-	else
-	{
-		const ANIMAL_STATE ANIMAL_STATES[6] = { ANIMAL_UNBORN, ANIMAL_BORN_SMALL, ANIMAL_BORN, ANIMAL_FULL_SIZE_1, ANIMAL_FULL_SIZE_2, ANIMAL_FULL_SIZE_3 };
-		animalState = ANIMAL_STATES[Functions::generateRandomNumber(0, 5)];
-	}
-
-	growth = Functions::generateRandomNumber(0, 50);
-	maxGrothFullSize = ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
-	entityName = "Animal";
 	animalActionState = AnimalEnumeration::ANIMAL_ACTION_IDLE;
 
 	controller = new AnimalController(this, map); //The controller object for this entity, handles all ai interaction
-
+	action = NULL;
 }
 
 //Animal destructor
@@ -88,80 +73,15 @@ void Animal::calcFrame(int framerate)
 
 }
 
-//Process Animal
+//proceed, override this to use in derived classes
 void Animal::proceed(int framerate)
 {
-	growAnimal(framerate, 1);
-	//Only update text if something relevant was changed before
-	if (entityChanged)
-	{
-		updateDebugText();
-		entityChanged = false;
-	}
-	//Controller decides an action
-	controller->decideAction(framerate);
-	//Do action
-	handleAction(framerate);
-
-	updateDebugTextPosition();
-
+	
 }
 
+//Animal growth, override this to use in derived classes
 void Animal::growAnimal(int framerate, double rate)
 {
-	using namespace AnimalEnumeration;
-
-	int growthCap[6] = { ANIMAL_GROWTH_RATE_UNBORN_TO_BORN_SMALL, ANIMAL_GROWTH_RATE_BORN_SMALL_TO_BORN, ANIMAL_GROWTH_RATE_BORN_TO_FULL_SIZE, (int)maxGrothFullSize, ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE };
-	int fullSize = 0;
-
-	if (animalState < ANIMAL_DISAPPEARED)
-	{
-		//Tree increments state
-		if (growthCap[animalState] <= (int)growth)
-		{
-			switch (animalState)
-			{
-			case ANIMAL_UNBORN:
-				animalState = ANIMAL_BORN_SMALL;
-				break;
-			case ANIMAL_BORN_SMALL:
-				animalState = ANIMAL_BORN;
-				break;
-			case ANIMAL_BORN:
-				fullSize = Functions::generateRandomNumber(0, 2);
-				switch (fullSize)
-				{
-				case 0:
-					animalState = ANIMAL_FULL_SIZE_1;
-					break;
-				case 1:
-					animalState = ANIMAL_FULL_SIZE_2;
-					break;
-				case 2:
-					animalState = ANIMAL_FULL_SIZE_3;
-					break;
-				default:
-					animalState = ANIMAL_FULL_SIZE_1;
-					break;
-				}
-
-				break;
-			case ANIMAL_FULL_SIZE_1:
-			case ANIMAL_FULL_SIZE_2:
-			case ANIMAL_FULL_SIZE_3:
-				animalState = ANIMAL_DEAD;
-				break;
-			case ANIMAL_DEAD:
-				animalState = ANIMAL_DISAPPEARED;
-				break;
-			default:
-				break;
-			}
-		}
-
-		//Grow the animal
-		growth = growth + (rate*Functions::calculateFrameFactor(framerate));
-	}
 
 }
 
@@ -188,4 +108,10 @@ AnimalEnumeration::ANIMAL_ACTION_STATE Animal::getActionStatus()
 void Animal::setActionStatus(AnimalEnumeration::ANIMAL_ACTION_STATE actionState)
 {
 	animalActionState = actionState;
+}
+
+//Returns the current state the animal is
+AnimalEnumeration::ANIMAL_STATE Animal::getAnimalState()
+{
+	return animalState;
 }

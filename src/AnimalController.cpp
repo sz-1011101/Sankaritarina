@@ -19,35 +19,45 @@ AnimalController::~AnimalController()
 //Decide an action
 Action* AnimalController::decideAction(int framerate)
 {
+
+	using namespace AnimalEnumeration;
+
 	Action* action = NULL;
 
-	//Check if its already time for a new decicion
-	if (decisionCooldown >= DECICION_COOLDOWN_THRESHOLD)
+	switch (((Animal*)entity)->getAnimalState())
 	{
-		decisionCooldown = 0;
-		if (((Animal*)entity)->getAction() == NULL)
+	case ANIMAL_UNBORN: //Do nothing if animal not born yet
+		break;
+	default:
+		//Check if its already time for a new decicion
+		if (decisionCooldown >= DECICION_COOLDOWN_THRESHOLD)
 		{
-			if (Functions::calculateRandomBoolean(33))
+			decisionCooldown = 0;
+
+			if (((Animal*)entity)->getAction() == NULL)
 			{
-				if (Functions::calculateRandomBoolean(50))
+				if (Functions::calculateRandomBoolean(33))
 				{
-					action = new MovementAction(entity, ((Animal*)entity)->MAX_MOVEMENT_ONE_STEP, 0);
+					if (Functions::calculateRandomBoolean(50))
+					{
+						action = new MovementAction(entity, ((Animal*)entity)->MAX_MOVEMENT_ONE_STEP, 0);
 
-				}
-				else
-				{
-					action = new MovementAction(entity, (-1)*((Animal*)entity)->MAX_MOVEMENT_ONE_STEP, 0);
-				}
+					}
+					else
+					{
+						action = new MovementAction(entity, (-1)*((Animal*)entity)->MAX_MOVEMENT_ONE_STEP, 0);
+					}
 
-				((Animal*)entity)->setAction(action);
+					((Animal*)entity)->setAction(action);
+				}
 			}
 		}
+		else
+		{
+			decisionCooldown = decisionCooldown + 1 * Functions::calculateFrameFactor(framerate);
+		}
+		break;
 	}
-	else
-	{
-		decisionCooldown = decisionCooldown + 1 * Functions::calculateFrameFactor(framerate);
-	}
-
 
 	return ((Action*)action);
 }

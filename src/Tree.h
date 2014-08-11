@@ -9,7 +9,7 @@ class Tree :
 {
 public:
 
-	Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const* FRAME_CENTER_OFFSET, World* world, bool seeded, int id);
+	Tree(int x, int y, Graphics* graphics, Texture* texture, World* world, bool seeded, int id);
 	~Tree();
 	virtual void render();
 	virtual void calcFrame(int framerate);
@@ -17,7 +17,7 @@ public:
 	virtual void proceed(int framerate);
 	virtual bool flaggedForRemoval();
 
-private:
+protected:
 
 	TreeEnumeration::TREE_STATE treeState;
 	double growth = 0;

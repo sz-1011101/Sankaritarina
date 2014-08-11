@@ -1,14 +1,12 @@
 //This class handles trees
 #include "World.h"
 #include <stdio.h>
-
 #include "Tree.h"
 #include "Functions.h"
 #include "Text.h"
 
-
 //Tree constructor, calling superclass
-Tree::Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int const* FRAME_COUNT, int const* FRAME_WIDTH, int const* FRAME_HEIGHT, int const*  FRAME_CENTER_OFFSET, World* world, bool seeded, int id) : Entity(x, y, weight, graphics, texture, FRAME_COUNT, FRAME_WIDTH, FRAME_HEIGHT, FRAME_CENTER_OFFSET, world, id)
+Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, World* world, bool seeded, int id) : Entity(x, y, graphics, texture, world, id)
 {
 	using namespace TreeEnumeration;
 	//Spawn as a tiny seed or at a random size
@@ -24,7 +22,7 @@ Tree::Tree(int x, int y, int weight, Graphics* graphics, Texture* texture, int c
 
 	growth = Functions::generateRandomNumber(0, 50);
 	maxGrothFullSize = TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
-	entityName = "Tree";
+	
 }
 
 //Tree Destructor

@@ -31,18 +31,6 @@ public:
 
 private:
 
-	const int TREE_FRAME_WIDTH = 64;
-	const int TREE_FRAME_HEIGHT = 64;
-	const int TREE_FRAMECOUNT = 8;
-	const int TREE_WEIGHT = 1000;
-	const int TREE_FRAME_CENTER_OFFSET = 20;
-
-	const int CHICKEN_FRAME_WIDTH = 16;
-	const int CHICKEN_FRAME_HEIGHT = 8;
-	const int CHICKEN_FRAMECOUNT = 10;
-	const int CHICKEN_WEIGHT = 1;
-	const int CHICKEN_FRAME_CENTER_OFFSET = 5;
-
 	std::vector<Entity*> entities;
 	EntityZone* entityZones;
 	Map* map;

@@ -39,5 +39,6 @@ v0.001:
 
 -Added forces and basic collisions (y dir), grass rendering, some fixes
 -Sourcefile relocation, AI basics added, chickens now move around randomly
+-Abstraction
 
 TODO: basic ai, controls handling, some cleanup
