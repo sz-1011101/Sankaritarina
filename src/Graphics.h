@@ -24,8 +24,10 @@ public:
 	bool drawRenderable(Renderable* renderable, bool useCamera);
 	bool drawTexture(Texture* texture, int x, int y, int w, int h, bool useCamera);
 	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, bool useCamera);
+	bool drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, double camShiftX, double camShiftY);
 	bool drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera);
 	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera);
+	
 	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera, bool flippedHorizontal);
 	bool drawBackground(Uint8 r, Uint8 g, Uint8 b);
 	void setTextureColorMod(Texture* texture, Uint8 r, Uint8 g, Uint8 b);

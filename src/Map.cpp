@@ -6,7 +6,8 @@
 #include "Graphics.h"
 #include "EntityControl.h"
 #include "World.h"
-
+#include "WorldEnumeration.h"
+#include "WorldStruct.h"
 
 #include <stdio.h>
 
@@ -84,7 +85,7 @@ void Map::generateMap(int sheerUp, int sheerDown, int initHeight, int treeRate, 
 		{
 			groundHeight = groundHeight + Functions::generateRandomNumber(-sheerDown, sheerUp);
 		}
-		else if (flattedTiles>0)
+		else if (flattedTiles > 0)
 		{
 			flattedTiles--;
 		}
@@ -145,7 +146,7 @@ int Map::getHeightSegment(int x)
 //Returns the height for graphical use
 int Map::getGraphicalHeightSegment(int x)
 {
-	return (mapHeight- segHeight[x])*MAP_TILE_WIDTH_HEIGHT;
+	return (mapHeight - segHeight[x])*MAP_TILE_WIDTH_HEIGHT;
 }
 
 //Returns the y position of the ground tile
@@ -159,6 +160,16 @@ void Map::render()
 {
 	//Draw Background
 	graphics->drawBackground(world->getRedSkyColor(), world->getGreenSkyColor(), world->getBlueSkyColor());
+
+	WorldStruct::SUN_POS sunPos = world->getSunPos(); //Retrieve sun position
+
+	//Use these values because the sun shouldn't move with the camera as much
+	const double CAMERA_X_SHIFT = 0.2;
+	const double CAMERA_Y_SHIFT = 1;
+
+	//Draw the sun texture
+	graphics->setTextureColorMod(TexturesEnumeration::TEXTURE_SUN, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+	graphics->drawTexture(TexturesEnumeration::TEXTURE_SUN, (int)sunPos.x, (int)sunPos.y, 8, 8, CAMERA_X_SHIFT, CAMERA_Y_SHIFT);
 
 	int cameraX = graphics->getCameraX();
 	int cameraY = graphics->getCameraY();

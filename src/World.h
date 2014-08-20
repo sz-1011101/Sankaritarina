@@ -1,10 +1,15 @@
 #pragma once
 #include "WorldEnumeration.h"
-
 #include <stdio.h>
 #include <string>
 #include <sstream>
 #include <SDL.h>
+
+namespace WorldStruct
+{
+	struct SUN_POS;
+}
+
 
 class World
 {
@@ -15,6 +20,7 @@ public:
 	WorldEnumeration::WORLD_SEASONS getCurrentSeason();
 	int getHour();
 	int getMinute();
+	
 	void advance(int framerate);
 	std::string getTimeString();
 	Uint8 getRedSkyColor();
@@ -24,6 +30,8 @@ public:
 	Uint8 getRedColorMod();
 	Uint8 getGreenColorMod();
 	Uint8 getBlueColorMod();
+
+	WorldStruct::SUN_POS getSunPos();
 
 private:
 

@@ -1,14 +1,16 @@
 #include "World.h"
 #include "Functions.h"
+#include "WorldStruct.h"
 
 #include <stdlib.h>
+#include <math.h>
 
 /*
 Init constants
 */
-const Uint8 World::SKY_HOUR_TARGET_RED_COLOR[] =   { 2, 2, 2, 2, 17, 52, 235, 241, 138, 84, 138, 100, 90, 60, 36, 022, 90, 102, 255, 255, 117, 27, 12, 7 };
+const Uint8 World::SKY_HOUR_TARGET_RED_COLOR[] = { 2, 2, 2, 2, 17, 52, 235, 241, 138, 84, 138, 100, 90, 60, 36, 022, 90, 102, 255, 255, 117, 27, 12, 7 };
 const Uint8 World::SKY_HOUR_TARGET_GREEN_COLOR[] = { 23, 23, 23, 23, 58, 22, 63, 126, 130, 116, 196, 170, 148, 132, 136, 129, 122, 95, 125, 108, 57, 17, 18, 37 };
-const Uint8 World::SKY_HOUR_TARGET_BLUE_COLOR[] =  { 38, 38, 38, 38, 121, 171, 231, 238, 238, 241, 242, 253, 252, 252, 247, 245, 248, 243, 197, 108, 240, 200, 101, 105 };
+const Uint8 World::SKY_HOUR_TARGET_BLUE_COLOR[] = { 38, 38, 38, 38, 121, 171, 231, 238, 238, 241, 242, 253, 252, 252, 247, 245, 248, 243, 197, 108, 240, 200, 101, 105 };
 
 const Uint8 World::ENTITY_HOUR_TARGET_RED_COLOR_MOD[] = { 45, 50, 65, 70, 128, 200, 210, 230, 250, 255, 255, 255, 255, 255, 255, 255, 230, 225, 220, 215, 200, 150, 100, 50 };
 const Uint8 World::ENTITY_HOUR_TARGET_GREEN_COLOR_MOD[] = { 50, 50, 50, 50, 60, 70, 100, 125, 200, 220, 255, 255, 255, 255, 255, 255, 150, 85, 80, 75, 85, 80, 75, 70 };
@@ -73,9 +75,25 @@ void World::advance(int framerate)
 			}
 			else
 			{
-				hour = 0;
 				day++;
-				hour = 0; //Just increment hours
+				hour = 0;
+				if (day < 15)
+				{
+					day++;
+				}
+				else
+				{
+					day = 1;
+					if (month < 9)
+					{
+						month++;
+					}
+					else
+					{
+						month = 1;
+						year++;
+					}
+				}
 			}
 		}
 	}
@@ -108,6 +126,8 @@ std::string World::getTimeString()
 	{
 		strstream << minute;
 	}
+
+	strstream << " " << day << "." << month << "." << year;
 
 	return strstream.str();
 }
@@ -193,7 +213,24 @@ Uint8 World::getGreenColorMod()
 {
 	return modG;
 }
+
 Uint8 World::getBlueColorMod()
 {
 	return modB;
+}
+
+//Returns a struct with the suns position
+//TODO fix sun positioning
+WorldStruct::SUN_POS World::getSunPos()
+{
+	WorldStruct::SUN_POS sunPos = { 0, 0, };
+
+	const float SUN_POS_POSITION_FACTOR = 1280.0 / 86400.0;
+	const float SUN_POS_FACTOR = 0.00000045;
+	int x = secound + (60 * minute) + (3600 * hour); //x is the total secound of the day
+
+	sunPos.x = x*SUN_POS_POSITION_FACTOR;
+	sunPos.y = std::pow((x - (60 * 60 * 24) / 2), 2)* SUN_POS_FACTOR +900;
+
+	return sunPos;
 }

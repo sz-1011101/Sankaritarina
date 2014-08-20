@@ -41,4 +41,6 @@ v0.001:
 -Sourcefile relocation, AI basics added, chickens now move around randomly
 -Abstraction
 
+-Added sun transition
+
 TODO: basic ai, controls handling, some cleanup

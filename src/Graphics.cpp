@@ -215,6 +215,26 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 	return false;
 }
 
+//Renders a texture from the gTexture array, if the texture isn't empty, return true
+//Uses the provided camShift values for camera offset amount
+bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, int y, int w, int h, double camShiftX, double camShiftY)
+{
+	if (texture != TexturesEnumeration::TEXTURE_EMPTY)
+	{
+		int mWidth = gTextures[texture]->getTextureWidth();
+		int mHeight = gTextures[texture]->getTextureHeight();
+
+		//Cube with the position, width and height
+		SDL_Rect rSquare;
+
+		rSquare = { x - gCamera->getCameraX()*camShiftX, y - gCamera->getCameraY()*camShiftY, mWidth, mHeight };
+
+		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
+		return true;
+	}
+	return false;
+}
+
 //Renders a SDL_texture, if the texture isn't NULL, return true
 //TODO make w,h useful
 bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, bool useCamera)
@@ -267,6 +287,8 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 
 	return false;
 }
+
+
 
 //Renders a texture from the gTexture array which is clipped in Frames and can be flipped
 bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int* FRAME_WIDTH, const int* FRAME_HEIGHT, bool useCamera, bool flippedHorizontal)
