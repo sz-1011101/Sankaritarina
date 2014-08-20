@@ -22,7 +22,7 @@ Tree::Tree(int x, int y, Graphics* graphics, Texture* texture, World* world, boo
 
 	growth = Functions::generateRandomNumber(0, 50);
 	maxGrothFullSize = TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
-	
+
 }
 
 //Tree Destructor

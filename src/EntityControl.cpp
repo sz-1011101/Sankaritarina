@@ -13,6 +13,9 @@
 #include "Appletree.h"
 #include "Chicken.h"
 
+#include "AnimalController.h"
+#include "EntityControllerPair.h"
+
 //Constructor
 EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 {
@@ -37,7 +40,7 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 //Deconstructor
 EntityControl::~EntityControl()
 {
-	std::vector<Entity*>::iterator entityIterator;
+	std::vector<EntityControllerPair*>::iterator entityIterator;
 
 	//Iterate over all entity elements and proceed
 	for (entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
@@ -50,19 +53,29 @@ EntityControl::~EntityControl()
 
 }
 
-//Add a new entity at the end of the entities vector, returns if successful
-bool EntityControl::addNewEntity(Entity* entity)
+//Returns true if entities can be fitted into the vector
+bool EntityControl::entitiesAddable()
 {
-	//Entity addable?
 	if ((int)entities.size() < MAX_ENTITIES)
 	{
-		entities.push_back(entity); //Add the Entity
-		printf("Entity added, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
 		return true;
 	}
 	else
 	{
 		return false;
+	}
+}
+
+
+//Add a new entity at the end of the entities vector, returns if successful
+void EntityControl::addNewEntity(Entity* entity, Controller* controller)
+{
+	//Entity addable?
+	if (entitiesAddable())
+	{
+		EntityControllerPair* entityControllerPair = new EntityControllerPair(entity, controller);
+		entities.push_back(entityControllerPair);
+		printf("Entity added, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
 	}
 
 }
@@ -71,41 +84,48 @@ bool EntityControl::addNewEntity(Entity* entity)
 //TODO check this for memleaks and safty
 void EntityControl::entityInteraction(int framerate)
 {
-	Entity* currentEntity;
+	EntityControllerPair* currentEntity;
 	//-----------------------Entity Handling-------------------------------//
 
 	animalsHandling(); //Spawn more chicken
 	vegetationHandling(); //Spawn more trees
 
 	//-----------------Entity Removal and rendering------------------------//
-	std::vector<Entity*>::iterator entityIterator = entities.begin();
+	std::vector<EntityControllerPair*>::iterator entityIterator = entities.begin();
 	//Run over alle entities
 	while (entityIterator != entities.end())
 	{
 		currentEntity = *entityIterator;
-		if (currentEntity->flaggedForRemoval())
+		if (currentEntity->getEntity()->flaggedForRemoval())
 		{
 			//Remove this from the zone, if it was assigned before
-			if (currentEntity->getCurrentEntityZone() != NULL)
+			if (currentEntity->getEntity()->getCurrentEntityZone() != NULL)
 			{
-				currentEntity->getCurrentEntityZone()->removeEntityFromZone(currentEntity->getId());
+				currentEntity->getEntity()->getCurrentEntityZone()->removeEntityFromZone(currentEntity->getEntity()->getId());
 			}
-			delete (*entityIterator); //Deallocate
+			delete *entityIterator; //Deallocate
 			entityIterator = entities.erase(entityIterator); //erase and put at new position
 			printf("Entity removed, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
 		}
 		else
 		{
 			//----------------Entity does stuff--------------------------------//
-			currentEntity->updateForces(framerate);
-			currentEntity->handleCollisions(framerate, map);
-			currentEntity->proceed(framerate);
 
-			updateZone(currentEntity);
+			//Controller decides an action, if controller avaible
+			if (currentEntity->getController() != NULL)
+			{
+				currentEntity->getController()->decideAction(framerate);
+			}
+
+			currentEntity->getEntity()->updateForces(framerate);
+			currentEntity->getEntity()->handleCollisions(framerate, map);
+			currentEntity->getEntity()->proceed(framerate);
+
+			updateZone(currentEntity->getEntity());
 
 
-			graphics->drawRenderable(currentEntity, true); //Clear for rendering
-			renderDebugText(currentEntity); //debug output
+			graphics->drawRenderable(currentEntity->getEntity(), true); //Clear for rendering
+			renderDebugText(currentEntity->getEntity()); //debug output
 
 
 			entityIterator++;
@@ -119,16 +139,18 @@ Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
 	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT;
-	Tree* spawnedTree = new Appletree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), world, seeded, ++idCounter);
 
 	//return if successful
-	if (addNewEntity(spawnedTree))
+	if (entitiesAddable())
 	{
+		Tree* spawnedTree = new Appletree(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_TREE), world, seeded, ++idCounter);
+
+		addNewEntity(spawnedTree, NULL);
+
 		return spawnedTree;
 	}
 	else
 	{
-		delete spawnedTree; //deallocate the now useless object
 		return NULL;
 	}
 }
@@ -138,16 +160,19 @@ Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
 	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT;
-	Animal* spawnedAnimal = new Chicken(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), world, map, born, ++idCounter);
 
 	//return if successful
-	if (addNewEntity(spawnedAnimal))
+	if (entitiesAddable())
 	{
+		Animal* spawnedAnimal = new Chicken(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), world, map, born, ++idCounter);
+		Controller* controller = new AnimalController(spawnedAnimal, map); //The controller object for this entity, handles all ai interaction
+
+		addNewEntity(spawnedAnimal, controller);
+
 		return spawnedAnimal;
 	}
 	else
 	{
-		delete spawnedAnimal; //deallocate the now useless object
 		return NULL;
 	}
 }

@@ -42,5 +42,6 @@ v0.001:
 -Abstraction
 
 -Added sun transition
+-Controller detached from entities
 
 TODO: basic ai, controls handling, some cleanup

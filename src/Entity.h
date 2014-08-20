@@ -54,7 +54,6 @@ protected:
 	World* world;
 	Text* debugText;
 	Action* action;
-	Controller* controller;
 	EntityZone* currentEntityZone;
 	std::string entityName;
 	int id;

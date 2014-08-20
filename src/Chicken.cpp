@@ -50,8 +50,6 @@ void Chicken::proceed(int framerate)
 		updateDebugText();
 		entityChanged = false;
 	}
-	//Controller decides an action
-	controller->decideAction(framerate);
 	//Do action
 	handleAction(framerate);
 
@@ -63,7 +61,7 @@ void Chicken::proceed(int framerate)
 void Chicken::growAnimal(int framerate, double rate)
 {
 	using namespace AnimalEnumeration;
-	
+
 	int growthCap[6] = { ANIMAL_GROWTH_RATE_UNBORN_TO_BORN_SMALL, ANIMAL_GROWTH_RATE_BORN_SMALL_TO_BORN, ANIMAL_GROWTH_RATE_BORN_TO_FULL_SIZE, (int)maxGrothFullSize, ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE };
 	int fullSize = 0;
 

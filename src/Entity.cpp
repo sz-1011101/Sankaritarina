@@ -28,7 +28,6 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, World* world,
 	currentEntityZone = NULL;
 	debugText = new Text("Entity", x, y - 100, 255, 255, 255, NULL, graphics, true);
 	forces = { 0, 0, 1 };
-	controller = NULL;
 	heading = EntityEnumeration::RIGHT;
 
 }

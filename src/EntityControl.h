@@ -9,6 +9,8 @@
 class EntityZone;
 class Tree;
 class Animal;
+class Controller;
+class EntityControllerPair;
 
 class EntityControl
 {
@@ -31,7 +33,8 @@ public:
 
 private:
 
-	std::vector<Entity*> entities;
+	std::vector<EntityControllerPair*> entities;
+
 	EntityZone* entityZones;
 	Map* map;
 	World* world;
@@ -39,7 +42,8 @@ private:
 	int amountZones;
 	int idCounter;
 
-	bool addNewEntity(Entity* entity);
+	bool entitiesAddable();
+	void addNewEntity(Entity* entity, Controller* controller);
 	void vegetationHandling();
 	void animalsHandling();
 	void updateZone(Entity* entity);

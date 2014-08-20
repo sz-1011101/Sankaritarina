@@ -3,7 +3,6 @@
 #include "Text.h"
 #include "EntityZone.h"
 #include "Action.h"
-#include "AnimalController.h"
 
 //Animal constructor
 Animal::Animal(int x, int y, Graphics* graphics, Texture* texture, World* world, Map* map, bool unborn, int id) : Entity(x, y, graphics, texture, world, id)
@@ -11,7 +10,6 @@ Animal::Animal(int x, int y, Graphics* graphics, Texture* texture, World* world,
 
 	animalActionState = AnimalEnumeration::ANIMAL_ACTION_IDLE;
 
-	controller = new AnimalController(this, map); //The controller object for this entity, handles all ai interaction
 	action = NULL;
 }
 
@@ -19,15 +17,13 @@ Animal::Animal(int x, int y, Graphics* graphics, Texture* texture, World* world,
 Animal::~Animal()
 {
 	//Deallocate action
-	if (action!=NULL)
+	if (action != NULL)
 	{
 		delete action;
 		action = NULL;
 	}
-	
-	//dealloc controller object
-	delete controller;
-	
+
+
 }
 
 //Renders the animal according to the state
@@ -46,7 +42,7 @@ void Animal::render()
 	{
 		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
 	}
-	
+
 
 }
 
@@ -85,7 +81,7 @@ void Animal::calcFrame(int framerate)
 //proceed, override this to use in derived classes
 void Animal::proceed(int framerate)
 {
-	
+
 }
 
 //Animal growth, override this to use in derived classes
