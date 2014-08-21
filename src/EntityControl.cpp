@@ -24,8 +24,8 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 	this->world = world;
 	entities.reserve(MAX_ENTITIES); //Reserve enough space for the vector
 	idCounter = 0;
-	//Initialize entity zones
 
+	//Initialize entity zones
 	amountZones = ceil(((double)map->getMapWidth()) / 30.0); //The map gets partitioned in zones of 30 tiles
 
 	entityZones = new EntityZone[amountZones];
@@ -92,7 +92,7 @@ void EntityControl::entityInteraction(int framerate)
 
 	//-----------------Entity Removal and rendering------------------------//
 	std::vector<EntityControllerPair*>::iterator entityIterator = entities.begin();
-	//Run over alle entities
+	//Run over all entities
 	while (entityIterator != entities.end())
 	{
 		currentEntity = *entityIterator;
@@ -107,29 +107,36 @@ void EntityControl::entityInteraction(int framerate)
 			entityIterator = entities.erase(entityIterator); //erase and put at new position
 			printf("Entity removed, current total= %i,current capacity= %i\n", entities.size(), entities.capacity());
 		}
-		else
+		entityIterator++;
+	}
+
+	//Run over all entities again, and decide an action
+	for (entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
+	{
+		currentEntity = *entityIterator;
+		//Controller decides an action, if controller avaible
+		if (currentEntity->getController() != NULL)
 		{
-			//----------------Entity does stuff--------------------------------//
-
-			//Controller decides an action, if controller avaible
-			if (currentEntity->getController() != NULL)
-			{
-				currentEntity->getController()->decideAction(framerate);
-			}
-
-			currentEntity->getEntity()->updateForces(framerate);
-			currentEntity->getEntity()->handleCollisions(framerate, map);
-			currentEntity->getEntity()->proceed(framerate);
-
-			updateZone(currentEntity->getEntity());
-
-
-			graphics->drawRenderable(currentEntity->getEntity(), true); //Clear for rendering
-			renderDebugText(currentEntity->getEntity()); //debug output
-
-
-			entityIterator++;
+			currentEntity->getController()->decideAction(framerate);
 		}
+	}
+
+
+	//Run over all entities again and run everything
+	for (entityIterator = entities.begin(); entityIterator != entities.end(); entityIterator++)
+	{
+		currentEntity = *entityIterator;
+		//----------------Entity does stuff--------------------------------//
+
+		currentEntity->getEntity()->updateForces(framerate);
+		currentEntity->getEntity()->handleCollisions(framerate, map);
+		currentEntity->getEntity()->proceed(framerate);
+
+		updateZone(currentEntity->getEntity());
+
+
+		graphics->drawRenderable(currentEntity->getEntity(), true); //Clear for rendering
+		renderDebugText(currentEntity->getEntity()); //debug output
 	}
 }
 

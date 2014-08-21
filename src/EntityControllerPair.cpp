@@ -1,6 +1,5 @@
 #include "EntityControllerPair.h"
-#include "Entity.h"
-#include "Controller.h"
+
 #define NULL 0
 //Constructor for a entity-controller pair
 EntityControllerPair::EntityControllerPair(Entity* entity, Controller* controller)

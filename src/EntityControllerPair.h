@@ -1,4 +1,6 @@
 #pragma once
+#include "Entity.h"
+#include "Controller.h"
 
 class Entity;
 class Controller;

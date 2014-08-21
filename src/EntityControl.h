@@ -11,6 +11,7 @@ class Tree;
 class Animal;
 class Controller;
 class EntityControllerPair;
+class ControllerThreadPool;
 
 class EntityControl
 {
@@ -39,6 +40,7 @@ private:
 	Map* map;
 	World* world;
 	Graphics* graphics;
+	ControllerThreadPool* controllerThreadPool;
 	int amountZones;
 	int idCounter;
 
