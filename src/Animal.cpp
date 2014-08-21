@@ -29,7 +29,6 @@ Animal::~Animal()
 //Renders the animal according to the state
 void Animal::render()
 {
-	calcFrame(0); //TODO call from outside
 	//color mod by worlds lighting
 	graphics->setTextureColorMod(texture, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	//draw frame of the tree
@@ -81,7 +80,8 @@ void Animal::calcFrame(int framerate)
 //proceed, override this to use in derived classes
 void Animal::proceed(int framerate)
 {
-
+	//reset the action state
+	animalActionState = AnimalEnumeration::ANIMAL_ACTION_IDLE;
 }
 
 //Animal growth, override this to use in derived classes

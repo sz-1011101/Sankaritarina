@@ -4,7 +4,7 @@
 #include "Entity.h"
 #include "Map.h"
 #include "World.h"
-
+#include "Animal.h"
 
 class EntityZone;
 class Tree;
@@ -27,7 +27,7 @@ public:
 	~EntityControl();
 
 	Tree* spawnTree(int tileX, int tileY, bool seeded);
-	Animal* spawnAnimal(int tileX, int tileY, bool born);
+	Animal* spawnAnimal(int tileX, int tileY, bool born, AnimalEnumeration::ANIMALS animal);
 
 	void populateMap(Map* map);
 	void entityInteraction(int framerate);

@@ -18,7 +18,6 @@
 	FRAME_WIDTH frame width
 	FRAME_HEIGHT frame height
 	*/
-
 Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, World* world, int id) : Renderable(x, y, graphics)
 {
 	this->texture = texture;
@@ -29,6 +28,7 @@ Entity::Entity(int x, int y, Graphics* graphics, Texture* texture, World* world,
 	debugText = new Text("Entity", x, y - 100, 255, 255, 255, NULL, graphics, true);
 	forces = { 0, 0, 1 };
 	heading = EntityEnumeration::RIGHT;
+	frameTime = 0;
 
 }
 
@@ -200,12 +200,20 @@ Action* Entity::getAction()
 }
 
 //Move the the entity in the direction provided
-void Entity::push(double x, double y, int framerate)
+void Entity::push(double x, double y, int framerate, bool selfAccelerated)
 {
 	const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
 
-	forces.x = forces.x + x*FRAME_FACTOR;
-	forces.y = forces.y + y*FRAME_FACTOR;
+	//Check if more acceleration allowed for this entity
+	if (selfAccelerated && forces.x < *MAX_OWN_ACCELERATION && forces.x>(-1)* *MAX_OWN_ACCELERATION)
+	{
+		forces.x = forces.x + x*FRAME_FACTOR;
+	}
+	//Same as above for y-dir
+	if (selfAccelerated && forces.y < *MAX_OWN_ACCELERATION && forces.y>(-1)* *MAX_OWN_ACCELERATION)
+	{
+		forces.y = forces.y + y*FRAME_FACTOR;
+	}
 }
 
 //action processing

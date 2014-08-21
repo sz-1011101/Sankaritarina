@@ -26,12 +26,10 @@ public:
 
 protected:
 
-	
-
 	AnimalEnumeration::ANIMAL_STATE animalState;
 	AnimalEnumeration::ANIMAL_ACTION_STATE animalActionState;
 	double growth = 0;
 	double maxGrothFullSize;
-
+	
 };
 

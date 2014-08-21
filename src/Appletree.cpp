@@ -17,6 +17,7 @@ Appletree::Appletree(int x, int y, Graphics* graphics, Texture* texture, World* 
 
 	//set weight
 	forces.weight = EntityConstants::APPLETREE_WEIGHT;
+	MAX_OWN_ACCELERATION = &EntityConstants::APPLETREE_MAX_OWN_ACCELERATION;
 }
 
 //Destructor

@@ -31,13 +31,16 @@ Chicken::Chicken(int x, int y, Graphics* graphics, Texture* texture, World* worl
 	FRAME_HEIGHT = &EntityConstants::CHICKEN_FRAME_HEIGHT;
 	FRAME_COUNT = &EntityConstants::CHICKEN_FRAME_COUNT;
 	FRAME_CENTER_OFFSET = &EntityConstants::CHICKEN_FRAME_CENTER_OFFSET;
+
 	//set weight
 	forces.weight = EntityConstants::CHICKEN_WEIGHT;
+	MAX_OWN_ACCELERATION = &EntityConstants::CHICKEN_MAX_OWN_ACCELERATION;
 }
 
 //Destructor
 Chicken::~Chicken()
 {
+
 }
 
 //method override
@@ -54,7 +57,7 @@ void Chicken::proceed(int framerate)
 	handleAction(framerate);
 
 	updateDebugTextPosition();
-
+	calcFrame(framerate);
 }
 
 //Method override

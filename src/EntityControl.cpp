@@ -12,6 +12,7 @@
 #include "Text.h"
 #include "Appletree.h"
 #include "Chicken.h"
+#include "Fox.h"
 
 #include "AnimalController.h"
 #include "EntityControllerPair.h"
@@ -26,7 +27,7 @@ EntityControl::EntityControl(Map* map, Graphics* graphics, World* world)
 	idCounter = 0;
 
 	//Initialize entity zones
-	amountZones = ceil(((double)map->getMapWidth()) / 30.0); //The map gets partitioned in zones of 30 tiles
+	amountZones = (int)ceil(((double)map->getMapWidth()) / 30.0); //The map gets partitioned in zones of 30 tiles
 
 	entityZones = new EntityZone[amountZones];
 
@@ -81,7 +82,6 @@ void EntityControl::addNewEntity(Entity* entity, Controller* controller)
 }
 
 //Handles the interaction between entities
-//TODO check this for memleaks and safty
 void EntityControl::entityInteraction(int framerate)
 {
 	EntityControllerPair* currentEntity;
@@ -141,7 +141,6 @@ void EntityControl::entityInteraction(int framerate)
 }
 
 //Spawns a tree, returns pointer if successful, NULL otherwise
-//TODO optimize and make more simple
 Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 {
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
@@ -162,19 +161,47 @@ Tree* EntityControl::spawnTree(int tileX, int tileY, bool seeded)
 	}
 }
 
-//Spawns a animal, returns pointer if successful, NULL otherwise
-Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
+//Spawns a chicken, returns pointer if successful, NULL otherwise
+//born determines if the animal should be spawned as a "newborn (egg)" or not
+Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born, AnimalEnumeration::ANIMALS animal)
 {
+	using namespace AnimalEnumeration;
+
 	int xPos = tileX*map->MAP_TILE_WIDTH_HEIGHT;
 	int yPos = tileY*map->MAP_TILE_WIDTH_HEIGHT;
+
+	Animal* spawnedAnimal = NULL;
 
 	//return if successful
 	if (entitiesAddable())
 	{
-		Animal* spawnedAnimal = new Chicken(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), world, map, born, ++idCounter);
+		//Decide animal based on provided value
+		switch (animal)
+		{
+		case CHICKEN:
+			spawnedAnimal = new Chicken(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_CHICKEN), world, map, born, ++idCounter);
+			break;
+		case FOX:
+			spawnedAnimal = new Fox(xPos, yPos, graphics, graphics->getTextures(TexturesEnumeration::TEXTURE_FOX), world, map, born, ++idCounter);
+			break;
+		default:
+			printf("Error: Couldn't spawn Animal\n");
+			break;
+		}
+
+		//Create controller for this animal, which will decide actions for it
 		Controller* controller = new AnimalController(spawnedAnimal, map); //The controller object for this entity, handles all ai interaction
 
-		addNewEntity(spawnedAnimal, controller);
+		//check if valid pointers provided
+		if (spawnedAnimal != NULL || controller != NULL)
+		{
+			addNewEntity(spawnedAnimal, controller);
+		}
+		else
+		{
+			printf("Error: Animal or Controller is NULL\n");
+		}
+
 
 		return spawnedAnimal;
 	}
@@ -183,7 +210,6 @@ Animal* EntityControl::spawnAnimal(int tileX, int tileY, bool born)
 		return NULL;
 	}
 }
-
 
 //Handles vegetation growth/spawning
 void EntityControl::vegetationHandling()
@@ -198,10 +224,20 @@ void EntityControl::vegetationHandling()
 //Handles animal spawning
 void EntityControl::animalsHandling()
 {
-	if (entities.size() < MAX_ENTITIES)
+	if ((int)entities.size() < MAX_ENTITIES)
 	{
 		int randomAnimalPosX = Functions::generateRandomNumber(0, map->getMapWidth() - 1);
-		spawnAnimal(randomAnimalPosX, map->getGraphicalHeightSegmentTile(randomAnimalPosX), true);
+
+		//Spawn a chicken for 50%, otherwise a fox
+		if (Functions::calculateRandomBoolean(50))
+		{
+			spawnAnimal(randomAnimalPosX, map->getGraphicalHeightSegmentTile(randomAnimalPosX), true, AnimalEnumeration::FOX);
+		}
+		else
+		{
+			spawnAnimal(randomAnimalPosX, map->getGraphicalHeightSegmentTile(randomAnimalPosX), true, AnimalEnumeration::CHICKEN);
+		}
+		
 	}
 }
 

@@ -14,7 +14,7 @@ public:
 
 private:
 
-	const int DECICION_COOLDOWN_THRESHOLD = 5;
+	const int DECICION_COOLDOWN_THRESHOLD_STANDARD = 10;
 
 };
 

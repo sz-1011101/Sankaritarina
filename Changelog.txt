@@ -43,5 +43,7 @@ v0.001:
 
 -Added sun transition
 -Controller detached from entities
+-Entity Overhaul
+-Foxes added (needs tweaking)
 
-TODO: basic ai, controls handling, some cleanup
+TODO: Entity attributes handling tweaking, basic ai, controls handling, some cleanup

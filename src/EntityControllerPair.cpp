@@ -1,3 +1,4 @@
+//Wrapper class for the controller and entity
 #include "EntityControllerPair.h"
 
 #define NULL 0

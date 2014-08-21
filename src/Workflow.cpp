@@ -49,6 +49,7 @@ int main(int argc, char* args[])
 	graphics->initTexture("images/tiles/8x8/Ground_8x8.png", TexturesEnumeration::TEXTURE_EARTH);
 	graphics->initTexture("images/entities/trees/appletree_64x64.png", TexturesEnumeration::TEXTURE_TREE);
 	graphics->initTexture("images/entities/animals/chicken_16x8.png", TexturesEnumeration::TEXTURE_CHICKEN);
+	graphics->initTexture("images/entities/animals/fox_32x16.png", TexturesEnumeration::TEXTURE_FOX);
 	graphics->initTexture("images/tiles/8x16/grass_tile_1_8x16.png", TexturesEnumeration::TEXTURE_GRASS_1);
 	graphics->initTexture("images/world/8x8/sun_8x8.png", TexturesEnumeration::TEXTURE_SUN);
 

@@ -14,7 +14,7 @@ public:
 
 private:
 
-	const int PROCESS_FOR_ITERATIONS = 10;
+	const int PROCESS_FOR_ITERATIONS = 5;
 
 	double x = 0;
 	double y = 0;

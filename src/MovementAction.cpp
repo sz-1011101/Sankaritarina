@@ -12,6 +12,7 @@ MovementAction::MovementAction(Entity* entity, double x, double y) : Action(enti
 
 MovementAction::~MovementAction()
 {
+
 }
 
 //Give the entity a push in the given direction
@@ -22,7 +23,7 @@ void MovementAction::process(int framerate)
 	if (!actionStarted)
 	{
 		//push the object
-		entity->push(x, y, framerate);
+		entity->push(x, y, framerate, true);
 		//set it's heading
 		if (x > 0)
 		{
@@ -36,11 +37,13 @@ void MovementAction::process(int framerate)
 		actionStarted = true;
 	}
 
+	//This holds the action for some "time" active
 	if (amountProcessed >= PROCESS_FOR_ITERATIONS)
 	{
 		actionDone = true;
 	}
 
+	//This action needs "time" to process some more
 	amountProcessed = amountProcessed + 1 * Functions::calculateFrameFactor(framerate);
 
 }

@@ -37,7 +37,7 @@ public:
 	void handleCollisions(int framerate, Map* map);
 	void setAction(Action* action);
 	Action* getAction();
-	void push(double x, double y, int framerate);
+	void push(double x, double y, int framerate, bool selfAccelerated);
 
 	void setHeading(EntityEnumeration::ENTITY_HEADING);
 
@@ -48,6 +48,9 @@ protected:
 	int const* FRAME_WIDTH;
 	int const* FRAME_HEIGHT;
 	int const* FRAME_CENTER_OFFSET;
+
+	const double FRAME_TIME_RATE = 1;
+	double const* MAX_OWN_ACCELERATION;
 
 	Texture* texture;
 	int currentFrame;
@@ -60,6 +63,7 @@ protected:
 	EntityStruct::entityForces forces;
 	bool entityChanged;
 	EntityEnumeration::ENTITY_HEADING heading;
+	double frameTime = 0;
 
 	void updateDebugTextPosition();
 	void updateDebugText();

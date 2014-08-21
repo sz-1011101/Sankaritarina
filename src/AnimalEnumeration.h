@@ -1,6 +1,14 @@
 
 namespace AnimalEnumeration
 {
+
+	typedef enum ANIMALS
+	{
+		CHICKEN=0,
+		FOX,
+		ANIMALS_TOTAL
+	};
+
 	typedef enum ANIMAL_STATE
 	{
 		ANIMAL_UNBORN = 0,
@@ -28,5 +36,6 @@ namespace AnimalEnumeration
 		ANIMAL_ACTION_IDLE = 0,
 		ANIMAL_ACTION_MOVING
 	};
+
 }
 
