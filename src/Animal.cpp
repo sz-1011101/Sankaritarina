@@ -29,17 +29,20 @@ Animal::~Animal()
 //Renders the animal according to the state
 void Animal::render()
 {
+	using namespace AnimalEnumeration;
+	using namespace AnimalConstants;
+
 	//color mod by worlds lighting
 	graphics->setTextureColorMod(texture, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	//draw frame of the tree
 
 	if (heading == EntityEnumeration::LEFT)
 	{
-		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true, true);
+		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, ANIMAL_VALUES[animalType][ANIMAL_FRAME_WIDTH], ANIMAL_VALUES[animalType][ANIMAL_FRAME_HEIGHT], true, true);
 	}
 	else
 	{
-		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
+		graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, ANIMAL_VALUES[animalType][ANIMAL_FRAME_WIDTH], ANIMAL_VALUES[animalType][ANIMAL_FRAME_HEIGHT], true);
 	}
 
 
@@ -75,6 +78,32 @@ void Animal::calcFrame(int framerate)
 		break;
 	}
 
+}
+
+//Lets animals move until they hit the ground, automatically adds gravity
+void Animal::handleCollisions(int framerate, Map* map)
+{
+
+	const int FRAME_WIDTH = AnimalConstants::ANIMAL_VALUES[animalType][AnimalEnumeration::ANIMAL_FRAME_WIDTH];
+	const int FRAME_HEIGHT = AnimalConstants::ANIMAL_VALUES[animalType][AnimalEnumeration::ANIMAL_FRAME_HEIGHT];
+	const int FRAME_CENTER_OFFSET = AnimalConstants::ANIMAL_VALUES[animalType][AnimalEnumeration::ANIMAL_FRAME_CENTER_OFFSET];
+	
+	const int MAP_GROUND_HEIGHT = map->getGraphicalHeightSegment(map->getTileXFromPosition((int)x + FRAME_CENTER_OFFSET));
+
+	if (MAP_GROUND_HEIGHT <= y + FRAME_HEIGHT)
+	{
+		y = MAP_GROUND_HEIGHT - FRAME_HEIGHT;
+		forces.y = 0;
+	}
+	//Map border collision
+	if (x <= 0)
+	{
+		x = 0;
+	}
+	else if (x >= map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - FRAME_WIDTH)
+	{
+		x = map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - FRAME_WIDTH;
+	}
 }
 
 //proceed, override this to use in derived classes

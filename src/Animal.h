@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-#include "AnimalEnumeration.h"
+#include "AnimalConstants.h"
 #include "Graphics.h"
 #include "Functions.h"
 
@@ -23,11 +23,14 @@ public:
 	AnimalEnumeration::ANIMAL_ACTION_STATE getActionStatus();
 	AnimalEnumeration::ANIMAL_STATE getAnimalState();
 	void setActionStatus(AnimalEnumeration::ANIMAL_ACTION_STATE actionState);
+	virtual void handleCollisions(int framerate, Map* map);
 
 protected:
 
 	AnimalEnumeration::ANIMAL_STATE animalState;
 	AnimalEnumeration::ANIMAL_ACTION_STATE animalActionState;
+	AnimalEnumeration::ANIMALS animalType;
+
 	double growth = 0;
 	double maxGrothFullSize;
 	

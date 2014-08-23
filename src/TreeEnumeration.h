@@ -4,6 +4,23 @@
 
 namespace TreeEnumeration
 {
+
+	typedef enum TREES
+	{
+		APPLETREE = 0,
+		TREES_TOTAL
+	};
+
+	typedef enum TREE_ATTRIBUTES
+	{
+		TREE_FRAME_WIDTH = 0,
+		TREE_FRAME_HEIGHT,
+		TREE_FRAME_COUNT,
+		TREE_FRAME_CENTER_OFFSET,
+		TREE_WEIGHT,
+		TREE_ATTRIBUTES_TOTAL
+	};
+
 	typedef enum TREE_STATE
 	{
 		TREE_SEEDED = 0,
@@ -24,15 +41,5 @@ namespace TreeEnumeration
 		TREE_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE = 1000,
 		TREE_GROWTH_RATE_DEATH_TO_DISAPPEAR = 300
 	};
-	//TREE_STATUS& operator++(TREE_STATUS& t)
-	//{
-	//	return t = TREE_STATUS((t + 1) % TREE_STATUS_TOTAL);
-	//}
 
-	//TREE_STATUS operator++(TREE_STATUS& t, int)
-	//{
-	//	TREE_STATUS old = t;
-	//	++t;
-	//	return old;
-	//}
 }

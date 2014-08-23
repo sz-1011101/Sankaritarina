@@ -5,10 +5,9 @@
 #include "Map.h"
 #include "World.h"
 #include "Animal.h"
+#include "Tree.h"
 
 class EntityZone;
-class Tree;
-class Animal;
 class Controller;
 class EntityControllerPair;
 class ControllerThreadPool;

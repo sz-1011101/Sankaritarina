@@ -3,6 +3,7 @@
 
 #include "Renderable.h"
 #include "World.h"
+#include "Map.h"
 #include "EntityStruct.h"
 #include "EntityEnumeration.h"
 
@@ -34,7 +35,7 @@ public:
 
 	Text* getDebugText();
 	void updateForces(int framerate);
-	void handleCollisions(int framerate, Map* map);
+	virtual void handleCollisions(int framerate, Map* map);
 	void setAction(Action* action);
 	Action* getAction();
 	void push(double x, double y, int framerate, bool selfAccelerated);
@@ -44,13 +45,8 @@ public:
 
 protected:
 
-	int const* FRAME_COUNT;
-	int const* FRAME_WIDTH;
-	int const* FRAME_HEIGHT;
-	int const* FRAME_CENTER_OFFSET;
-
 	const double FRAME_TIME_RATE = 1;
-	double const* MAX_OWN_ACCELERATION;
+	double maximumOwnAcceleration;
 
 	Texture* texture;
 	int currentFrame;

@@ -1,28 +1,27 @@
+//This class implements the fox
 #include "Fox.h"
 #include "Text.h"
 #include "EntityZone.h"
 #include "Action.h"
 #include "AnimalController.h"
-#include "EntityConstants.h"
 
+//Constructor
 Fox::Fox(int x, int y, Graphics* graphics, Texture* texture, World* world, Map* map, bool unborn, int id) : Animal(x, y, graphics, texture, world, map, unborn, id)
 {
 
 	using namespace AnimalEnumeration;
+	using namespace AnimalConstants;
 
 	//No lifecycle yet
 	animalState = ANIMAL_FULL_SIZE_1;
 
 	entityName = "Fox";
+	animalType = FOX;
 
-	//Set the constant values (pointers)
-	FRAME_WIDTH = &EntityConstants::FOX_FRAME_WIDTH;
-	FRAME_HEIGHT = &EntityConstants::FOX_FRAME_HEIGHT;
-	FRAME_COUNT = &EntityConstants::FOX_FRAME_COUNT;
-	FRAME_CENTER_OFFSET = &EntityConstants::FOX_FRAME_CENTER_OFFSET;
-	//set weight
-	forces.weight = EntityConstants::FOX_WEIGHT;
-	MAX_OWN_ACCELERATION = &EntityConstants::FOX_MAX_OWN_ACCELERATION;
+	//Set weight
+	forces.weight = ANIMAL_VALUES[animalType][ANIMAL_WEIGHT];
+	//maximum speed that this animal can move by "powered" by its own feet
+	maximumOwnAcceleration = 1;
 }
 
 //Destructor

@@ -1,15 +1,16 @@
+//This class implements the chicken
 #include "Chicken.h"
 #include "Text.h"
 #include "EntityZone.h"
 #include "Action.h"
 #include "AnimalController.h"
-#include "EntityConstants.h"
 
 //Constructor for a chicken object
 Chicken::Chicken(int x, int y, Graphics* graphics, Texture* texture, World* world, Map* map, bool unborn, int id) : Animal(x, y, graphics, texture, world, map, unborn, id)
 {
 	//use namespaces to get access to constants and enums
 	using namespace AnimalEnumeration;
+	using namespace AnimalConstants;
 
 	//Spawn as unborn or a random state
 	if (unborn)
@@ -25,16 +26,12 @@ Chicken::Chicken(int x, int y, Graphics* graphics, Texture* texture, World* worl
 	growth = Functions::generateRandomNumber(0, 50);
 	maxGrothFullSize = ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE + Functions::generateRandomNumber(-ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE, ANIMAL_GROWTH_RATE_FULL_SIZE_TO_DEATH_AVERAGE);
 	entityName = "Chicken";
-
-	//Set the constant values (pointers)
-	FRAME_WIDTH = &EntityConstants::CHICKEN_FRAME_WIDTH;
-	FRAME_HEIGHT = &EntityConstants::CHICKEN_FRAME_HEIGHT;
-	FRAME_COUNT = &EntityConstants::CHICKEN_FRAME_COUNT;
-	FRAME_CENTER_OFFSET = &EntityConstants::CHICKEN_FRAME_CENTER_OFFSET;
+	animalType = CHICKEN;
 
 	//set weight
-	forces.weight = EntityConstants::CHICKEN_WEIGHT;
-	MAX_OWN_ACCELERATION = &EntityConstants::CHICKEN_MAX_OWN_ACCELERATION;
+	forces.weight = ANIMAL_VALUES[animalType][ANIMAL_WEIGHT];
+	//maximum speed that this animal can move by "powered" by its own feet
+	maximumOwnAcceleration = 0.35;
 }
 
 //Destructor

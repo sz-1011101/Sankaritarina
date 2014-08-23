@@ -45,5 +45,6 @@ v0.001:
 -Controller detached from entities
 -Entity Overhaul
 -Foxes added (needs tweaking)
+-Changed the way entity values are used
 
 TODO: Entity attributes handling tweaking, basic ai, controls handling, some cleanup

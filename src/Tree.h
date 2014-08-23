@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-#include "TreeEnumeration.h"
+#include "TreeConstants.h"
 #include "Graphics.h"
 #include "Functions.h"
 
@@ -16,10 +16,12 @@ public:
 	void growTree(int framerate, double rate);
 	virtual void proceed(int framerate);
 	virtual bool flaggedForRemoval();
+	virtual void handleCollisions(int framerate, Map* map);
 
 protected:
 
 	TreeEnumeration::TREE_STATE treeState;
+	TreeEnumeration::TREES treeType;
 	double growth = 0;
 	double maxGrothFullSize;
 

@@ -5,7 +5,6 @@
 #include "Graphics.h"
 #include "Text.h"
 #include "EntityZone.h"
-#include "Map.h"
 #include "Functions.h"
 #include "Action.h"
 
@@ -41,14 +40,7 @@ Entity::~Entity()
 //render function for Entity
 void Entity::render()
 {
-	//Dummy - just loops through
-	int frameCount = *FRAME_COUNT;
-	if (currentFrame >= frameCount) {
-		currentFrame = 0;
-	}
 
-	graphics->drawFrameTexture(texture, (int)x, (int)y, currentFrame, 0, FRAME_WIDTH, FRAME_HEIGHT, true);
-	currentFrame++;
 }
 
 //Calc Frame if animation wanted
@@ -114,6 +106,12 @@ int Entity::getId()
 	return id;
 }
 
+//Handle collisions....
+void Entity::handleCollisions(int framerate, Map* map)
+{
+
+}
+
 //Update forces like gravity
 void Entity::updateForces(int framerate)
 {
@@ -166,26 +164,6 @@ void Entity::updateForces(int framerate)
 
 }
 
-//Lets entities move until they hit the ground, automatically adds gravity
-void Entity::handleCollisions(int framerate, Map* map)
-{
-	const int MAP_GROUND_HEIGHT = map->getGraphicalHeightSegment(map->getTileXFromPosition((int)x + *FRAME_CENTER_OFFSET));
-
-	if (MAP_GROUND_HEIGHT <= y + *FRAME_HEIGHT)
-	{
-		y = MAP_GROUND_HEIGHT - *FRAME_HEIGHT;
-		forces.y = 0;
-	}
-	//Map border collision
-	if (x <= 0)
-	{
-		x = 0;
-	}
-	else if (x >= map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - *FRAME_WIDTH)
-	{
-		x = map->getMapWidth()*map->MAP_TILE_WIDTH_HEIGHT - *FRAME_WIDTH;
-	}
-}
 
 //Sets the current Action of this entity
 void Entity::setAction(Action* action)
@@ -205,12 +183,12 @@ void Entity::push(double x, double y, int framerate, bool selfAccelerated)
 	const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
 
 	//Check if more acceleration allowed for this entity
-	if (selfAccelerated && forces.x < *MAX_OWN_ACCELERATION && forces.x>(-1)* *MAX_OWN_ACCELERATION)
+	if (selfAccelerated && forces.x < maximumOwnAcceleration && forces.x>(-1)* maximumOwnAcceleration)
 	{
 		forces.x = forces.x + x*FRAME_FACTOR;
 	}
 	//Same as above for y-dir
-	if (selfAccelerated && forces.y < *MAX_OWN_ACCELERATION && forces.y>(-1)* *MAX_OWN_ACCELERATION)
+	if (selfAccelerated && forces.y < maximumOwnAcceleration && forces.y>(-1)* maximumOwnAcceleration)
 	{
 		forces.y = forces.y + y*FRAME_FACTOR;
 	}
