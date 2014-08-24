@@ -3,7 +3,7 @@
 #include "WorldStruct.h"
 
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 /*
 Init constants

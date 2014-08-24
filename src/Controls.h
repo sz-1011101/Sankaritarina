@@ -1,9 +1,12 @@
 #pragma once
+#ifdef _MSC_VER
 #include <SDL.h>
+#else //Linux
+#include <SDL2/SDL.h>
+#endif
 
 #include "ControlsEnumeration.h"
 #include "Camera.h"
-
 
 class Controls
 {

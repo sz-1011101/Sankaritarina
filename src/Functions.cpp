@@ -30,7 +30,7 @@ double Functions::calculateFrameFactor(int framerate)
 	}
 	else
 	{
-		return 0.0;
+		return 999999999;
 	}
 }
 

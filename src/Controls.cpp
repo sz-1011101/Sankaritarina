@@ -1,5 +1,4 @@
 //This class all user input
-#include <SDL.h>
 #include <stdio.h>
 
 #include "Controls.h"

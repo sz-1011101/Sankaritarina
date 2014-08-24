@@ -47,4 +47,7 @@ v0.001:
 -Foxes added (needs tweaking)
 -Changed the way entity values are used
 
+-FPS independence altered (needs further testing though)
+-Linux compiling works now (via basic makefile)
+
 TODO: Entity attributes handling tweaking, basic ai, controls handling, some cleanup

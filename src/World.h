@@ -1,9 +1,16 @@
 #pragma once
+#ifdef _MSC_VER
+#include <SDL.h>
+#else //Linux
+#include <SDL2/SDL.h>
+#endif
+
 #include "WorldEnumeration.h"
 #include <stdio.h>
 #include <string>
 #include <sstream>
-#include <SDL.h>
+
+
 
 namespace WorldStruct
 {

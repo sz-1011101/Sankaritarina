@@ -1,6 +1,5 @@
 //this class handles text rendering
-#include <SDL.h>
-#include <SDL_ttf.h>
+
 #include <stdio.h>
 #include <string>
 #include <sstream>
@@ -25,7 +24,7 @@ Text::Text(std::string displayedText, int x, int y, int r, int g, int b, TTF_Fon
 	//Create the texture
 	if (!initText(displayedText, color, font, graphics))
 	{
-		printf("Error creating text \"%s\"\n", (std::string)displayedText);
+		printf("Error creating text \"%s\"\n", displayedText.c_str());
 	}
 
 }

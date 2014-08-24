@@ -1,7 +1,6 @@
 //This class namespace enumerations for trees
 #pragma once
 
-
 namespace TreeEnumeration
 {
 

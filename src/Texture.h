@@ -1,7 +1,14 @@
 #pragma once
+#ifdef _MSC_VER
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#else //Linux
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#endif
+
 #include <stdio.h>
 #include <string>
 

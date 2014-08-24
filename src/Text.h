@@ -1,6 +1,12 @@
 #pragma once
+#ifdef _MSC_VER
 #include <SDL.h>
 #include <SDL_ttf.h>
+#else //Linux
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#endif
+
 #include <vector>
 #include "Renderable.h"
 

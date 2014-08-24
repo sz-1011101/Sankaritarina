@@ -121,8 +121,11 @@ void Entity::updateForces(int framerate)
 
 	const double GRAVITY = 0.5;
 
-	//if entity is in the sky, apply gravity, otherwise stop entity from falling through
+	//Update positions by forces
+	x = x + forces.x*FRAME_FACTOR;
+	y = y + forces.y*FRAME_FACTOR;
 
+	//if entity is in the sky, apply gravity
 	if (forces.y < MAX_ACCELARATION_Y)
 	{
 		forces.y = forces.y + GRAVITY*FRAME_FACTOR;
@@ -158,9 +161,7 @@ void Entity::updateForces(int framerate)
 		forces.x = 0;
 	}
 
-	//Update positions by forces
-	x = x + forces.x;
-	y = y + forces.y;
+
 
 }
 
@@ -180,7 +181,8 @@ Action* Entity::getAction()
 //Move the the entity in the direction provided
 void Entity::push(double x, double y, int framerate, bool selfAccelerated)
 {
-	const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
+	//const double FRAME_FACTOR = Functions::calculateFrameFactor(framerate);
+	const double FRAME_FACTOR = 0.3;
 
 	//Check if more acceleration allowed for this entity
 	if (selfAccelerated && forces.x < maximumOwnAcceleration && forces.x>(-1)* maximumOwnAcceleration)

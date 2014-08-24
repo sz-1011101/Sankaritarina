@@ -1,5 +1,5 @@
 //This file contains the entry point of the application
-#include <SDL.h>
+
 #include <stdio.h>
 #include <string>
 #include <sstream>

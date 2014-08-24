@@ -1,5 +1,4 @@
 //This class handles timers
-#include <SDL.h>
 #include "Timer.h"
 
 //Constructor
