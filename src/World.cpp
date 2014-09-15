@@ -53,50 +53,37 @@ int World::getMinute()
 //Advance in time in the world
 void World::advance(int framerate)
 {
-	//advance in time
-	if (secound < 59)
-	{
-		//the secound increases depending on the framerate
-		secound = secound + SECOUND_INCREASE_FACTOR*Functions::calculateFrameFactor(framerate);
-	}
-	else
+
+
+	secound = secound + SECOUND_INCREASE_FACTOR*Functions::calculateFrameFactor(framerate);
+
+	if (secound >= 60 * 60 * 24)
 	{
 		secound = 0;
-		if (minute < 59)
+		day++;
+		hour = 0;
+		if (day < 15)
 		{
-			minute++;
+			day++;
 		}
 		else
 		{
-			minute = 0;
-			if (hour < 23)
+			day = 1;
+			if (month < 9)
 			{
-				hour++;
+				month++;
 			}
 			else
 			{
-				day++;
-				hour = 0;
-				if (day < 15)
-				{
-					day++;
-				}
-				else
-				{
-					day = 1;
-					if (month < 9)
-					{
-						month++;
-					}
-					else
-					{
-						month = 1;
-						year++;
-					}
-				}
+				month = 1;
+				year++;
 			}
 		}
 	}
+
+	hour = (secound / 60) / 60;
+	minute = ((secound / 60) - hour * 60);
+
 	//effects
 	calcAndSetSkyColor();
 	calcAndSetEntityColorModulation();
@@ -106,6 +93,7 @@ std::string World::getTimeString()
 {
 	std::stringstream strstream;
 	strstream.str("");
+
 	//Make a nice readable stringstream
 	if (hour < 10)
 	{
@@ -220,17 +208,15 @@ Uint8 World::getBlueColorMod()
 }
 
 //Returns a struct with the suns position
-//TODO fix sun positioning
 WorldStruct::SUN_POS World::getSunPos()
 {
 	WorldStruct::SUN_POS sunPos = { 0, 0, };
 
-	const float SUN_POS_POSITION_FACTOR = 1280.0 / 86400.0;
-	const float SUN_POS_FACTOR = 0.00000045;
-	int x = secound + (60 * minute) + (3600 * hour); //x is the total secound of the day
+	const double SUN_POS_FACTOR_X = 1280.0 / 86400.0;
+	const double SUN_POS_FACTOR_Y = 0.00000045;
 
-	sunPos.x = x*SUN_POS_POSITION_FACTOR;
-	sunPos.y = std::pow((x - (60 * 60 * 24) / 2), 2)* SUN_POS_FACTOR +900;
+	sunPos.x = secound*SUN_POS_FACTOR_X;
+	sunPos.y = std::pow((secound - (60 * 60 * 24) / 2), 2)* SUN_POS_FACTOR_Y + 900;
 
 	return sunPos;
 }

@@ -183,7 +183,7 @@ bool Graphics::drawTexture(Texture* texture, int x, int y, int w, int h, bool us
 		//Add camera offset if wanted
 		if (useCamera)
 		{
-			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+			rSquare = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), mWidth, mHeight };
 		}
 		else
 		{
@@ -210,7 +210,7 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 		//Add camera offset if wanted
 		if (useCamera)
 		{
-			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), mWidth, mHeight };
+			rSquare = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), mWidth, mHeight };
 		}
 		else
 		{
@@ -235,7 +235,7 @@ bool Graphics::drawTexture(TexturesEnumeration::TEXTURES_NAME texture, int x, in
 		//Cube with the position, width and height
 		SDL_Rect rSquare;
 
-		rSquare = { x - gCamera->getCameraX()*camShiftX, y - gCamera->getCameraY()*camShiftY, mWidth, mHeight };
+		rSquare = { x - (int)(gCamera->getCameraX()*camShiftX), y - (int)(gCamera->getCameraY()*camShiftY), mWidth, mHeight };
 
 		SDL_RenderCopy(gRenderer, gTextures[texture]->getTexture(), NULL, &rSquare);
 		return true;
@@ -255,7 +255,7 @@ bool Graphics::drawSDLTexture(SDL_Texture* texture, int x, int y, int w, int h, 
 		//Add camera offset if wanted
 		if (useCamera)
 		{
-			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), w, h };
+			rSquare = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), w, h };
 		}
 		else
 		{
@@ -280,7 +280,7 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 		//Add camera offset if wanted
 		if (useCamera)
 		{
-			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), FRAME_WIDTH, FRAME_HEIGHT };
+			rSquare = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), FRAME_WIDTH, FRAME_HEIGHT };
 		}
 		else
 		{
@@ -323,7 +323,7 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 		//Add camera offset if wanted
 		if (useCamera)
 		{
-			rSquare = { x - gCamera->getCameraX(), y - gCamera->getCameraY(), FRAME_WIDTH, FRAME_HEIGHT };
+			rSquare = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), FRAME_WIDTH, FRAME_HEIGHT };
 		}
 		else
 		{
@@ -338,6 +338,35 @@ bool Graphics::drawFrameTexture(Texture* texture, int x, int y, int currentFrame
 	}
 
 	return false;
+}
+
+//Draw the background
+bool Graphics::drawBackground(Uint8 r, Uint8 g, Uint8 b)
+{
+	SDL_SetRenderDrawColor(gRenderer, r, g, b, 0x00);
+	SDL_RenderClear(gRenderer);
+
+	return true;
+}
+
+//Draw a rectangle with the provided values x, y, height, width
+bool Graphics::fillRect(int x, int y, int width, int height, Uint8 r, Uint8 g, Uint8 b, Uint8 alpha, bool useCamera)
+{
+	SDL_Rect rectangleValues;
+
+	if (useCamera)
+	{
+		rectangleValues = { x - (int)gCamera->getCameraX(), y - (int)gCamera->getCameraY(), width, height };
+	}
+	else
+	{
+		rectangleValues = { x, y, width, height };
+	}
+
+	SDL_SetRenderDrawColor(gRenderer, r, g, b, alpha);
+	SDL_RenderFillRect(gRenderer, &rectangleValues);
+
+	return true;
 }
 
 //Adds the Renderable object to the RenderList, to draw with graphicsRender()
@@ -357,9 +386,9 @@ bool Graphics::drawRenderable(Renderable* renderable, bool useCamera)
 //Checks if the renderable object is visible to the Camera
 bool Graphics::checkRenderableVisible(Renderable* renderable)
 {
-	if (renderable->getX() >= gCamera->getCameraX() - 128 && renderable->getX() < gCamera->getCameraX() + *SCREEN_WIDTH + 128)
+	if (renderable->getX() >= (int)gCamera->getCameraX() - 128 && renderable->getX() < (int)gCamera->getCameraX() + *SCREEN_WIDTH + 128)
 	{
-		if (renderable->getY() >= gCamera->getCameraY() - 128 && renderable->getY() < gCamera->getCameraY() + *SCREEN_HEIGHT + 128)
+		if (renderable->getY() >= (int)gCamera->getCameraY() - 128 && renderable->getY() < (int)gCamera->getCameraY() + *SCREEN_HEIGHT + 128)
 		{
 			return true;
 		}
@@ -370,27 +399,19 @@ bool Graphics::checkRenderableVisible(Renderable* renderable)
 //Retruns the Cameras X Position
 int Graphics::getCameraX()
 {
-	return gCamera->getCameraX();
+	return (int)gCamera->getCameraX();
 }
 
 //Retruns the Cameras Y Position
 int Graphics::getCameraY()
 {
-	return gCamera->getCameraY();
+	return (int)gCamera->getCameraY();
 }
 
 //Returns Texture
 Texture* Graphics::getTextures(TexturesEnumeration::TEXTURES_NAME texture)
 {
 	return gTextures[texture];
-}
-
-//Draw the background
-bool Graphics::drawBackground(Uint8 r, Uint8 g, Uint8 b)
-{
-	SDL_SetRenderDrawColor(gRenderer, r, g, b, 0x00);
-	SDL_RenderClear(gRenderer);
-	return true;
 }
 
 //Modify a textures color mod

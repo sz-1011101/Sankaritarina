@@ -30,6 +30,8 @@ public:
 	
 	bool drawFrameTexture(Texture* texture, int x, int y, int currentFrame, int currentRow, const int FRAME_WIDTH, const int FRAME_HEIGHT, bool useCamera, bool flippedHorizontal);
 	bool drawBackground(Uint8 r, Uint8 g, Uint8 b);
+	bool fillRect(int x, int y, int height, int width, Uint8 r, Uint8 g, Uint8 b, Uint8 alpha, bool useCamera);
+
 	void setTextureColorMod(Texture* texture, Uint8 r, Uint8 g, Uint8 b);
 	void setTextureColorMod(TexturesEnumeration::TEXTURES_NAME texture, Uint8 r, Uint8 g, Uint8 b);
 

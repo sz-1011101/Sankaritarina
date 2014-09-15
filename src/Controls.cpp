@@ -28,20 +28,20 @@ ControlsEnumeration::CTRL_STATUS Controls::processKeys(ControlsEnumeration::CTRL
 		//Left/Right movement of the camera
 		if (currentKeys[SDL_SCANCODE_A])
 		{
-			camera->setCameraPos(camera->getCameraX() - (int)(camera->CAMERA_MAX_VELOCITY*frameFactor), camera->getCameraY());
+			camera->setCameraPos(camera->getCameraX() - (camera->CAMERA_MAX_VELOCITY*frameFactor), camera->getCameraY());
 		}
 		else if (currentKeys[SDL_SCANCODE_D])
 		{
-			camera->setCameraPos(camera->getCameraX() + (int)(camera->CAMERA_MAX_VELOCITY*frameFactor), camera->getCameraY());
+			camera->setCameraPos(camera->getCameraX() + (camera->CAMERA_MAX_VELOCITY*frameFactor), camera->getCameraY());
 		}
 		//Up/Down movement of the camera
 		if (currentKeys[SDL_SCANCODE_W])
 		{
-			camera->setCameraPos(camera->getCameraX(), camera->getCameraY() - (int)(camera->CAMERA_MAX_VELOCITY*frameFactor));
+			camera->setCameraPos(camera->getCameraX(), camera->getCameraY() - (camera->CAMERA_MAX_VELOCITY*frameFactor));
 		}
 		else if (currentKeys[SDL_SCANCODE_S])
 		{
-			camera->setCameraPos(camera->getCameraX(), camera->getCameraY() + (int)(camera->CAMERA_MAX_VELOCITY*frameFactor));
+			camera->setCameraPos(camera->getCameraX(), camera->getCameraY() + (camera->CAMERA_MAX_VELOCITY*frameFactor));
 		}
 	}
 

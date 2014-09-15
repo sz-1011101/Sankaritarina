@@ -36,7 +36,7 @@ private:
 	Uint8* segHeight;
 	Graphics* graphics;
 
-
+	bool checkTileVisible(int tileX, int tileY);
 
 };
 

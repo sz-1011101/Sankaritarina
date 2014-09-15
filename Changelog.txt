@@ -50,4 +50,8 @@ v0.001:
 -FPS independence altered (needs further testing though)
 -Linux compiling works now (via basic makefile)
 
+-Rectangle filling added to the graphics class
+-Tile drawing update with major performance increase(at least 4 times faster)
+-Changed the way time is calculated/advanced
+
 TODO: Entity attributes handling tweaking, basic ai, controls handling, some cleanup

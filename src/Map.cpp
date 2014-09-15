@@ -158,16 +158,15 @@ int Map::getGraphicalHeightSegmentTile(int x)
 //Render the map via graphics
 void Map::render()
 {
-	//Draw Background
 	graphics->drawBackground(world->getRedSkyColor(), world->getGreenSkyColor(), world->getBlueSkyColor());
 
-	WorldStruct::SUN_POS sunPos = world->getSunPos(); //Retrieve sun position
+	WorldStruct::SUN_POS sunPos = world->getSunPos();
 
 	//Use these values because the sun shouldn't move with the camera as much
 	const double CAMERA_X_SHIFT = 0.2;
 	const double CAMERA_Y_SHIFT = 1;
 
-	//Draw the sun texture
+	//Draw the sun texture with color modulation
 	graphics->setTextureColorMod(TexturesEnumeration::TEXTURE_SUN, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
 	graphics->drawTexture(TexturesEnumeration::TEXTURE_SUN, (int)sunPos.x, (int)sunPos.y, 8, 8, CAMERA_X_SHIFT, CAMERA_Y_SHIFT);
 
@@ -203,44 +202,59 @@ void Map::render()
 	TexturesEnumeration::TEXTURES_NAME textureToDraw = TexturesEnumeration::TEXTURE_EMPTY; //Main texture to draw
 	TexturesEnumeration::TEXTURES_NAME textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY; //Texture to draw adjacent to the main tile
 	int textureToDrawAdditionalOffset = 0;
+	bool visibleTile;
+	bool notEmptyTile;
 
 	//render everything
 	for (int i = firstIndexX; i < lastIndexX; i++)
 	{
 		for (int j = firstIndexY; j < lastIndexY; j++)
 		{
-			switch (map[i][j][0])
+			visibleTile = true;
+			notEmptyTile = true;
+
+			if (map[i][j][0] == MapEnumeration::MAP_TILE_TYPE_EMTPY)
 			{
-			case MapEnumeration::MAP_TILE_TYPE_EMTPY:
 				textureToDraw = TexturesEnumeration::TEXTURE_EMPTY;
 				textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY;
-				break;
-			case MapEnumeration::MAP_TILE_TYPE_EARTH:
-				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
-				textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY;
-				break;
-			case MapEnumeration::MAP_TILE_TYPE_GRASS:
-				textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
-				textureToDrawAdditional = TexturesEnumeration::TEXTURE_GRASS_1;
-				textureToDrawAdditionalOffset = 2;
-				break;
-			}
-
-			//color mod by worlds lighting for the surface tile
-			if (mapHeight - j == segHeight[i])
-			{
-
-				graphics->setTextureColorMod(textureToDraw, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
-				graphics->setTextureColorMod(textureToDrawAdditional, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+				notEmptyTile = false;
 			}
 			else
 			{
-				graphics->setTextureColorMod(textureToDraw, 255, 255, 255);
-				graphics->setTextureColorMod(textureToDrawAdditional, 255, 255, 255);
+
+				notEmptyTile = true;
+
+				if ((visibleTile = checkTileVisible(i, j)) == true)
+				{
+					switch (map[i][j][0])
+					{
+					case MapEnumeration::MAP_TILE_TYPE_EARTH:
+						textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
+						textureToDrawAdditional = TexturesEnumeration::TEXTURE_EMPTY;
+						break;
+					case MapEnumeration::MAP_TILE_TYPE_GRASS:
+						textureToDraw = TexturesEnumeration::TEXTURE_EARTH;
+						textureToDrawAdditional = TexturesEnumeration::TEXTURE_GRASS_1;
+						textureToDrawAdditionalOffset = 2;
+						break;
+					}
+				}
 			}
 
-			graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
-			graphics->drawTexture(textureToDrawAdditional, i * MAP_TILE_WIDTH_HEIGHT, (j - textureToDrawAdditionalOffset) * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
+			if (visibleTile && notEmptyTile)
+			{
+				//color mod by worlds lighting for the surface tile
+				graphics->setTextureColorMod(textureToDraw, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+				graphics->setTextureColorMod(textureToDrawAdditional, world->getRedColorMod(), world->getGreenColorMod(), world->getBlueColorMod());
+
+				graphics->drawTexture(textureToDraw, i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
+				graphics->drawTexture(textureToDrawAdditional, i * MAP_TILE_WIDTH_HEIGHT, (j - textureToDrawAdditionalOffset) * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, true);
+			}
+			else if (notEmptyTile)
+			{
+				graphics->fillRect(i * MAP_TILE_WIDTH_HEIGHT, j * MAP_TILE_WIDTH_HEIGHT, MAP_TILE_WIDTH_HEIGHT, (lastIndexY-j)*MAP_TILE_WIDTH_HEIGHT, 0, 0, 0, 0x00, true);
+				break; //Break since the non visible part has been drawn
+			}
 
 		}
 	}
@@ -262,4 +276,32 @@ int Map::getMapHeight()
 int Map::getTileXFromPosition(int x)
 {
 	return x / MAP_TILE_WIDTH_HEIGHT;
+}
+
+//Check if the adjazent tiles are visible, meaning the provided position is adjazent to a EMPTY tile (not diagonally)
+bool Map::checkTileVisible(int tileX, int tileY)
+{
+	if (tileX < 0 || tileY < 0)
+	{
+		return false;
+	}
+
+	if (tileX > 0 && map[tileX - 1][tileY][0] == MapEnumeration::MAP_TILE_TYPE_EMTPY)
+	{
+		return true;
+	}
+	else if (tileX < mapWidth && map[tileX + 1][tileY][0] == MapEnumeration::MAP_TILE_TYPE_EMTPY)
+	{
+		return true;
+	}
+	else if (tileY > 0 && map[tileX][tileY - 1][0] == MapEnumeration::MAP_TILE_TYPE_EMTPY)
+	{
+		return true;
+	}
+	else if (tileY < mapHeight && map[tileX][tileY + 1][0] == MapEnumeration::MAP_TILE_TYPE_EMTPY)
+	{
+		return true;
+	}
+
+	return false;
 }
